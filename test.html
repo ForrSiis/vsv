@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+
+<head>
+<title>VSV Examples</title>
+<style>
+[class^=vsv] {margin-bottom: 1em;
+border: 1px solid black; border-collapse: collapse; display: table /*box shrinks to fit contents*/;}
+.vsvtable td, .vsvtable th {border: 1px solid black; padding: 3px;}
+.vsvlist dt {display: list-item; list-style: circle inside; }
+.vsvlist dd {display: list-item;}
+pre {white-space: pre-wrap;}
+</style>
+<script src="vsv.js"></script>
+</head>
+
+<body>
+
+<h1>VSV Examples</h1>
+
+<p>In the examples below, each VSV code block precedes their corresponding output after the code has been parsed. Style to your taste.</p>
+
+<h2>VSV to list</h2>
+
+<h3>Unordered list</h3>
+
+<pre class="vsv2list">
+,milk
+,eggs
+,patties
+,fries
+,hazelnut creamer
+,sliced bread
+</pre>
+
+<h3>Description list</h3>
+
+<pre class="vsv2list">
+[[loginname]]
+:smithj
+[[password]]
+:x
+[[userid]]
+:561
+[[groupid]]
+:561
+[[realname]]
+:Joe Smith
+[[homedir]]
+:/home/smithj
+[[shell]]
+:/bin/bash
+</pre>
+
+<h2>VSV to table</h2>
+
+<h3>Table with varying delimiters on each row</h3>
+
+<pre class="vsv2table">
+[[Name]] {{Age}} ((Gender))
+,Hammie, 20.5, F
+-Chow, Vivian-40-F
+:Amuseum:25:M:
+*Shena'Fu *18+5/12 *F
+|Grndr-1245|21 months||
+
+	Fairy Nuff	14 K	N/A
+</pre>
+
+<h3>Configuration file</h3>
+
+<pre class="vsv2table">
+[[General]]
+((display options: fullscreen, windowed, windowedmax
+=display=fullscreen
+=width=1920
+=height=1080
+</pre>
+
+<h2>VSV to XML</h2>
+
+<p>Note: Angled brackets (the less-than and greater-than symbols) must be written as HTML entities if served within HTML page via a browser or HTTP stream (e.g. cUrl). Otherwise, just use the symbols directly (e.g. interpreting a VSV text file to XML.).</p>
+
+<pre class="vsv2xml">
+&lt;&lt;div&gt;&gt;
+ &lt;&lt;p&gt;&gt;
+  ~To: Tove
+ &lt;&lt;/&gt;&gt;
+ &lt;&lt;p&gt;&gt;
+  ~From: Jani
+ &lt;&lt;/&gt;&gt;
+ &lt;&lt;h2&gt;&gt;
+  ~Reminder
+ &lt;&lt;/&gt;&gt;
+ &lt;&lt;p&gt;&gt;
+  &lt;&lt;span&gt;&gt;
+   =style=color: red
+   ~Don't forget me this weekend!
+  &lt;&lt;/&gt;&gt;
+ &lt;&lt;/&gt;&gt;
+&lt;&lt;/&gt;&gt;
+</pre>
+
+<h2>VSV to JSON</h2>
+
+<pre class="vsv2json">
+{{}}
+ {{menu}}
+  ~id~file
+  ~value~File
+  {{popup}}
+   [[menuitem]]
+    {{}}
+     ~value~New
+     ~onclick~CreateNewDoc()
+    {{;}}
+    {{}}
+     ~value~Open
+     ~onclick~OpenDoc()
+    {{;}}
+    {{}}
+     ~value~Close
+     ~onclick~CloseDoc()
+    {{;}}
+   [[;]]
+  {{;}}
+ {{;}}
+{{;}}
+</pre>
+
+</body>
+
+</html>
