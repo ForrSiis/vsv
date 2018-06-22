@@ -74,6 +74,13 @@ The first nonspace character of a data row is its delimiter. The values of this 
 
 In PHP, use the explode() function to store a row's values into an array split by the delimiter. For other languages, use a regexp to match the values separated by the delimiter.
 
+** Install **
+
+Perform the following based on your platform and needs.
+
+- Get TablesPlus for SMF forums and Wordpress blogs.
+- For other websites with plain HTML, include the "vsv.js" script to re-render sections of the page that have the class "vsv" into a HTML table.
+
 ** Examples **
 
 * VSV in various styles and situations
