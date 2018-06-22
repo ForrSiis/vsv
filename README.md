@@ -14,14 +14,18 @@ Rows are separated by newline.
 
 ** Creating Header Rows **
 
-Header rows are optional. Each header field is enclosed by any of these double matching bracket types:
-Code: [Select]
+Header rows are optional.
+
+A header row consists of one or more header field. Each header field is enclosed by any of these double matching bracket types:
+
 [[]]
 {{}}
 (())
 <<>>
 
-Different header fields may use different brackets types. Mixed bracket types may be employed on the same header row.
+A header row is identified when, ignoring the opening spaces of a row, the first two characters of a row are any consecutive double opening brackets, as listed above.
+
+Distinct header fields may use the same or different brackets types. Different bracket types may be employed on the same header row and across rows.
 
 When exporting to a VSV file, characters that are found in a header field must not be used as enclosing brackets for that field. Choose a bracket not found in that field to surround that field.
 
@@ -29,19 +33,22 @@ Any text in a header row that is not within the legal boundaries of a header fie
 
 ** Creating Data Rows **
 
-Data rows (non headers) must be led by an explicit nonspace character, called delimiter. Values for that row are placed between two delimiters. The first occurrence of a delimiter on that row is not counted as part of the values.
+Data rows (non headers) must be led by an explicit nonspace character, called delimiter. All leading spaces are ignored until a nonspace character is found, which becomes the delimiter for that row.
+
+Values for a data row are placed between two delimiters. The first occurrence of a delimiter on that row is not counted as part of the values. To prevent delimiter-value collision, the delimiter should be a character that is not found in the values' texts of that row.
 
 A null value has zero length, signified by consecutive delimiters with nothing in between them.
 
 A delimiter at the end of the line after the final value is optional, unless the final value is a null value.
 
-Each row may have its own distinct delimiter. A text file may have different rows with various delimiters. Creators can use the same delimiters or mix them for different rows, as long as the desired values on that row are distinguishable (i.e. to prevent delimiter collision.)
+Each row may have its own distinct delimiter. A text file may have distinct rows with their own delimiters. Creators can use the same delimiters or mix them for different rows, as long as the desired values on that row are distinguishable (i.e. to prevent delimiter-value collision.)
 
 When exporting to a VSV file, characters that are found in the values of a given row must not be used as delimiter for that row. Choose a character not found in that row's values as the delimiter for that row.
-Space and newline cannot be used as delimiter. Any other single character may be used.
-Letters and numbers may be used as delimiters, but are not recommended.
-Avoid using header field brackets as data row delimiters. Nevertheless, single bracket at beginning of a row should be read as a legal delimiter.
-Creators may have their own preferred delimiters. Common delimiters to use:
+
+- Space and newline cannot be used as delimiter. Any other single character may be used.
+- Letters and numbers may be used as delimiters, but are not recommended.
+- Avoid using header field brackets as data row delimiters. Nevertheless, single bracket at beginning of a row should be read as a legal delimiter.
+- Creators may have their own preferred delimiters. Common delimiters to use:
 
 ,
 :
@@ -79,15 +86,24 @@ In PHP, use the explode() function to store a row's values into an array split b
 Perform the following based on your platform and needs.
 
 - Get TablesPlus for SMF forums and Wordpress blogs.
-- For other websites with plain HTML, include the "vsv.js" script to re-render sections of the page that have the class "vsv" into a HTML table.
+- For other websites with plain HTML, include the "vsv.js" script to re-render sections of the page that have one of the following classes:
+    - vsv2list
+    - vsv2table
+    - vsv2json
+    - vsv2xml
 
 ** Examples **
 
 * VSV in various styles and situations
 * Comparison to other text formats
+* View test.html with vsv.js in the same folder.
+* Try out the plugins for SMF and Wordpress.
 
-** Questions **
+** FAQ **
 
-* How to handle values that contain newline?
+* How to handle values that contain just newline?
+    * Blank lines is recommended to be skipped over in the output.
 * Can it be used for objects or hierarchy? i.e. in place of JSON, XML, HTML
-* Can it be used as configuration file? cf. INI, CONF files
+    * The syntax of VSV is flexible enough as substitute for JSON and XML. However, the aesthetics may or may not fit your personal taste.
+* Can it be used as configuration file? cf. INI, CONF files, passwd
+    * Yes, VSV can be used to replace simple configuration and database files.
