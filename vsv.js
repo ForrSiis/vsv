@@ -168,8 +168,8 @@ function Vsv2JSON(text) {
 
 function Vsv2XML(text) {
 	var xml = document.createElement("div");
-	var stack = [];
-	var currTag;
+	var stack = [xml];
+	var currTag = xml, lastTag = xml;
 
 	// parse by row
 	var rows = htmlEntitiesDecode(text).split("\n");
@@ -191,12 +191,15 @@ function Vsv2XML(text) {
 					// determine if opener or closer
 					switch (tag) {
 						case '/':
-							currTag = stack.pop();
+							// close current tag and retrieve last tag
+							currTag = lastTag = stack.pop();
 							break;
 						default:
-							currTag = document.createElement(tag);
-							xml.appendChild(currTag);
+							// add new tag to hierarchy
 							stack.push(currTag);
+							lastTag = currTag;
+							currTag = document.createElement(tag);
+							lastTag.appendChild(currTag);
 					}
 				}
 			}

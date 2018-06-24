@@ -18,10 +18,12 @@ Header rows are optional.
 
 A header row consists of one or more header field. Each header field is enclosed by any of these double matching bracket types:
 
+```
 [[]]
 {{}}
 (())
 <<>>
+```
 
 A header row is identified when, ignoring the opening spaces of a row, the first two characters of a row are any consecutive double opening brackets, as listed above.
 
@@ -49,7 +51,7 @@ When exporting to a VSV file, characters that are found in the values of a given
 - Letters and numbers may be used as delimiters, but are not recommended.
 - Avoid using header field brackets as data row delimiters. Nevertheless, single bracket at beginning of a row should be read as a legal delimiter.
 - Creators may have their own preferred delimiters. Common delimiters to use:
-
+```
 ,
 :
 |
@@ -60,8 +62,9 @@ When exporting to a VSV file, characters that are found in the values of a given
 #
 %
 ~
+`
 TAB
-
+```
 
 ** Importing VSV (reading files) **
 
@@ -107,3 +110,5 @@ Perform the following based on your platform and needs.
     * The syntax of VSV is flexible enough as substitute for JSON and XML. However, the aesthetics may or may not fit your personal taste.
 * Can it be used as configuration file? cf. INI, CONF files, passwd
     * Yes, VSV can be used to replace simple configuration and database files.
+* Can it be used for subtitles and playlists?
+    * Yes, VSV can be used for subtitles and playlists. Standards are in R&D phase.

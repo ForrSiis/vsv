@@ -10,6 +10,7 @@ border: 1px solid black; border-collapse: collapse; display: table /*box shrinks
 .vsvlist dt {display: list-item; list-style: circle inside; }
 .vsvlist dd {display: list-item;}
 pre {white-space: pre-wrap;}
+.class {color: green;}
 </style>
 <script src="vsv.js"></script>
 </head>
@@ -18,11 +19,13 @@ pre {white-space: pre-wrap;}
 
 <h1>VSV Examples</h1>
 
-<p>In the examples below, each VSV code block precedes their corresponding output after the code has been parsed. Style to your taste.</p>
+<p>In the examples below, each <a href="https://bitbucket.org/Shenafu/vsv">VSV</a> code block precedes their corresponding output after the code has been parsed. Style to your taste.</p>
 
 <h2>VSV to list</h2>
 
-<h3>Unordered list</h3>
+<span class="class">class="vsv2list"</span>
+
+<h3>List with no headers</h3>
 
 <pre class="vsv2list">
 ,milk
@@ -33,7 +36,17 @@ pre {white-space: pre-wrap;}
 ,sliced bread
 </pre>
 
-<h3>Description list</h3>
+<h3>List with headers</h3>
+
+<pre class="vsv2list">
+{{Shopping List}}
+,milk
+,eggs
+,patties
+,fries
+,hazelnut creamer
+,sliced bread
+</pre>
 
 <pre class="vsv2list">
 [[loginname]]
@@ -54,7 +67,11 @@ pre {white-space: pre-wrap;}
 
 <h2>VSV to table</h2>
 
-<h3>Table with varying delimiters on each row</h3>
+<span class="class">class="vsv2table"</span>
+
+<h3>Table with headers and data</h3>
+
+<p>Choose your own delimiters--anything but space.</p>
 
 <pre class="vsv2table">
 [[Name]] {{Age}} ((Gender))
@@ -79,6 +96,8 @@ pre {white-space: pre-wrap;}
 
 <h2>VSV to XML</h2>
 
+<span class="class">class="vsv2xml"</span>
+
 <p>Note: Angled brackets (the less-than and greater-than symbols) must be written as HTML entities if served within HTML page via a browser or HTTP stream (e.g. cUrl). Otherwise, just use the symbols directly (e.g. interpreting a VSV text file to XML.).</p>
 
 <pre class="vsv2xml">
@@ -93,15 +112,21 @@ pre {white-space: pre-wrap;}
   ~Reminder
  &lt;&lt;/&gt;&gt;
  &lt;&lt;p&gt;&gt;
+   ~Meeting this weekend!
   &lt;&lt;span&gt;&gt;
    =style=color: red
-   ~Don't forget me this weekend!
+   ~ Don't forget!
+  &lt;&lt;/&gt;&gt;
+  &lt;&lt;p&gt;&gt;
+   ~-J
   &lt;&lt;/&gt;&gt;
  &lt;&lt;/&gt;&gt;
 &lt;&lt;/&gt;&gt;
 </pre>
 
 <h2>VSV to JSON</h2>
+
+<span class="class">class="vsv2json"</span>
 
 <pre class="vsv2json">
 {{}}
