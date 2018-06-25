@@ -3,6 +3,7 @@
 
 <head>
 <title>VSV Examples</title>
+<meta charset="UTF-8">
 <style>
 [class^=vsv] {margin-bottom: 1em;
 border: 1px solid black; border-collapse: collapse; display: table /*box shrinks to fit contents*/;}
@@ -13,13 +14,18 @@ pre {white-space: pre-wrap;}
 .class {color: green;}
 </style>
 <script src="vsv.js"></script>
+<script src="test.js"></script>
 </head>
 
 <body>
 
 <h1>VSV Examples</h1>
 
-<p>In the examples below, each <a href="https://bitbucket.org/Shenafu/vsv">VSV</a> code block precedes their corresponding output after the code has been parsed. Style to your taste.</p>
+<p><a href="https://bitbucket.org/Shenafu/vsv">VSV</a> is easily converted to lists, tables, xml, and json.</p>
+
+<p>(TBD: other formats, including subtitles, playlist, ...)</p>
+
+<p>In the examples below, each VSV code block precedes their corresponding output after the code has been parsed. Comments are basically unclosed header fields. Style to your taste.</p>
 
 <h2>VSV to list</h2>
 
@@ -31,9 +37,12 @@ pre {white-space: pre-wrap;}
 ,milk
 ,eggs
 ,patties
+((forgot
+,
 ,fries
 ,hazelnut creamer
 ,sliced bread
+,
 </pre>
 
 <h3>List with headers</h3>
@@ -43,9 +52,12 @@ pre {white-space: pre-wrap;}
 ,milk
 ,eggs
 ,patties
+((forgot
+,
 ,fries
 ,hazelnut creamer
 ,sliced bread
+,
 </pre>
 
 <pre class="vsv2list">
@@ -63,6 +75,7 @@ pre {white-space: pre-wrap;}
 :/home/smithj
 [[shell]]
 :/bin/bash
+((etc.
 </pre>
 
 <h2>VSV to table</h2>
@@ -75,6 +88,7 @@ pre {white-space: pre-wrap;}
 
 <pre class="vsv2table">
 [[Name]] {{Age}} ((Gender))
+((each row of data can have different delimiter, no problem
 ,Hammie, 20.5, F
 -Chow, Vivian-40-F
 :Amuseum:25:M:
@@ -94,6 +108,12 @@ pre {white-space: pre-wrap;}
 =height=1080
 </pre>
 
+<h3>Horizontal table</h3>
+<pre class="vsv2table">
+[[loginname]] [[password]] [[userid]] [[groupid]] [[realname]] [[homedir]] [[shell]]
+:smithj:x:561:561:Joe Smith:/home/smithj:/bin/bash
+</pre>
+
 <h2>VSV to XML</h2>
 
 <span class="class">class="vsv2xml"</span>
@@ -101,6 +121,7 @@ pre {white-space: pre-wrap;}
 <p>Note: Angled brackets (the less-than and greater-than symbols) must be written as HTML entities if served within HTML page via a browser or HTTP stream (e.g. cUrl). Otherwise, just use the symbols directly (e.g. interpreting a VSV text file to XML.).</p>
 
 <pre class="vsv2xml">
+((should work for all XML derivatives
 &lt;&lt;div&gt;&gt;
  &lt;&lt;p&gt;&gt;
   ~To: Tove
@@ -129,6 +150,8 @@ pre {white-space: pre-wrap;}
 <span class="class">class="vsv2json"</span>
 
 <pre class="vsv2json">
+((probably harder to read than JSON, but has similar capabilities
+((however, JSON doesn't allow comments, like these first two lines
 {{}}
  {{menu}}
   ~id~file
