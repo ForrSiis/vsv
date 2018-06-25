@@ -10,105 +10,19 @@ Public Domain - Open standard - No royalty
 var FIELD_OPENER = /(\[\[|\(\(|\{\{|\<\<)/;
 var FIELD_BRACKETS = /[\{\(\[\<]{2}(.*?)[\}\)\]\>]{2}/g;
 var JSON_BRACKET = /^ *[\{\[]/;
-var XML_BRACKET = /^ *[\<]/;
-var XML_OPENER = '<';
-var XML_CLOSER = '>';
 
 function htmlEntitiesDecode(str) {
     return String(str).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
 }
 
-function Vsv2Table(text) {
-	var table = document.createElement("table");
+function vsvRow2Array(text) {
+	// convert text rows into array
+	// each array item is subarray of header or data items
+	// each subarray's 0th index is 'header' or 'data'
 
-	// parse by row
-	var rows = text.split("\n");
-	for (var i=0, ilen=rows.length; i<ilen; i++) {
-		var row = rows[i].replace( /^ +/, ''); // trim spaces only
+	var vsvArray = [];
 
-		if (FIELD_OPENER.test(row)) {
-			// is header row
-			var tr = document.createElement("tr");
-			table.appendChild(tr);
-			// get all fields into table
-			var matches = row.match(FIELD_BRACKETS);
-			if (matches) {
-				for (var j=0, jlen=matches.length; j<jlen; j++) {
-					var header = matches[j].replace(FIELD_BRACKETS, "$1");
-					var th = document.createElement("th");
-					tr.appendChild(th);
-					th.innerText = header;
-				}
-			}
-		}
-		else {
-			// is data row
-			var delimiter = row.substring(0, 1);
-			row = row.substring(1); // ignore first delimiter
-			// check for optional delimiter at end
-			if (row.lastIndexOf(delimiter)==row.length-1) {
-				row = row.substring(0, row.length-1);
-			}
-			// get all values into table
-			if (delimiter) {
-				var matches = row.split(delimiter);
-				var tr = document.createElement("tr");
-				table.appendChild(tr);
-				for (var j=0, jlen=matches.length; j<jlen; j++) {
-					var data = matches[j];
-					var td = document.createElement("td");
-					tr.appendChild(td);
-					td.innerText = data;
-				}
-			}
-		}
-	}
-	return table;
-}
-
-function Vsv2List(text) {
-	var list = document.createElement("dl");
-
-	// parse by row
-	var rows = text.split("\n");
-	for (var i=0, ilen=rows.length; i<ilen; i++) {
-		var row = rows[i].replace( /^ +/, ''); // trim spaces only
-
-		if (FIELD_OPENER.test(row)) {
-			// is header row
-			var dt = document.createElement("dt");
-			list.appendChild(dt);
-			// get all fields into list
-			var matches = row.match(FIELD_BRACKETS);
-			if (matches) {
-				for (var j=0, jlen=matches.length; j<jlen; j++) {
-					var header = matches[j].replace(FIELD_BRACKETS, "$1");
-					var span = document.createElement("span");
-					span.style.display = "inline-block";
-					span.innerText = header;
-					dt.appendChild(span);
-				}
-			}
-		}
-		else {
-			// is data row
-			var item = row.substring(1).trim();
-			if (item.length > 0) {
-				var dd = document.createElement("dd");
-				dd.innerText = item; // ignore first delimiter
-				list.appendChild(dd);
-			}
-		}
-	}
-
-	return list;
-}
-
-function Vsv2JSON(text) {
-	var json = "";
-
-	// parse by row
-	var rows = text.split("\n");
+	var rows = htmlEntitiesDecode(text).split("\n");
 	for (var i=0, ilen=rows.length; i<ilen; i++) {
 		var row = rows[i].replace( /^ +/, ''); // trim spaces only
 
@@ -116,15 +30,199 @@ function Vsv2JSON(text) {
 			continue;
 		}
 
+		var matches = null;
+
 		if (FIELD_OPENER.test(row)) {
 			// is header row
 			// get all fields into array
-			var matches = row.match(FIELD_BRACKETS);
+			matches = row.match(FIELD_BRACKETS);
 			if (matches) {
-				for (var j=0, jlen=matches.length; j<jlen; j++) {
-					var field = matches[j].replace(FIELD_BRACKETS, "$1");
-					var bracketOpen = matches[j].substring(0, 1);
-					var bracketClose = matches[j].substring(matches[j].length-1);
+				matches.splice(0, 0, 'header');
+			}
+		}
+		else {
+			// is data row
+			var delimiter = row.substring(0, 1);
+			row = row.substring(1); // ignore first delimiter
+			// ignore if last character is delimiter
+			if (row.charAt(row.length-1)==delimiter) {
+				row = row.substring(0, row.length-1)
+			}
+			matches = row.split(delimiter);
+			if (matches) {
+				matches.splice(0, 0, 'data');
+			}
+		}
+
+		if (matches) {
+			vsvArray.push(matches);
+		}
+	}
+
+	return vsvArray;
+}
+
+function Vsv2List(vsv) {
+	if (typeof vsv == "string") {
+		vsv = vsvRow2Array(vsv);
+	}
+
+	var list = document.createElement("dl");
+
+	// parse by row
+	for (var i=0, ilen=vsv.length; i<ilen; i++) {
+		var row = vsv[i];
+		var rowType = row.shift();
+
+		switch (rowType) {
+			case 'header':
+				// is header row
+				// get all fields into list
+				for (var j=0, jlen=row.length; j<jlen; j++) {
+					var header = row[j].replace(FIELD_BRACKETS, "$1");
+					var dt = document.createElement("dt");
+					var span = document.createElement("span");
+					span.style.display = "inline-block";
+					span.innerText = header;
+					dt.appendChild(span);
+					list.appendChild(dt);
+				}
+				break;
+			case 'data':
+				// is data row
+				for (var j=0, jlen=row.length; j<jlen; j++ ) {
+					var item = row[j];
+					if (item.length > 0) {
+						var dd = document.createElement("dd");
+						dd.innerText = item; // ignore first delimiter
+						list.appendChild(dd);
+					}
+				}
+				break;
+		}
+	}
+
+	return list;
+}
+
+function Vsv2Table(vsv) {
+	if (typeof vsv == "string") {
+		vsv = vsvRow2Array(vsv);
+	}
+
+	var table = document.createElement("table");
+
+	// parse by row
+	for (var i=0, ilen=vsv.length; i<ilen; i++) {
+		var row = vsv[i];
+		var rowType = row.shift();
+
+		var tr = document.createElement("tr");
+		table.appendChild(tr);
+
+		switch (rowType) {
+			case 'header':
+				// is header row
+				// get all fields into table
+				for (var j=0, jlen=row.length; j<jlen; j++) {
+					var header = row[j].replace(FIELD_BRACKETS, "$1");
+					var th = document.createElement("th");
+					tr.appendChild(th);
+					th.innerText = header;
+				}
+				break;
+			case 'data':
+				// is data row
+				// get all values into table
+				for (var j=0, jlen=row.length; j<jlen; j++) {
+					var data = row[j];
+					var td = document.createElement("td");
+					tr.appendChild(td);
+					td.innerText = data;
+				}
+				break;
+		}
+	}
+
+	return table;
+}
+
+function Vsv2XML(vsv) {
+	if (typeof vsv == "string") {
+		vsv = vsvRow2Array(vsv);
+	}
+
+	var xml = document.createElement("div");
+	var stack = [xml];
+	var currTag = xml, lastTag = xml;
+
+	// parse by row
+	for (var i=0, ilen=vsv.length; i<ilen; i++) {
+		var row = vsv[i];
+		var rowType = row.shift();
+
+		switch (rowType) {
+			case 'header':
+				// is header row
+				// get all fields into array
+				for (var j=0, jlen=row.length; j<jlen; j++) {
+					var tag = row[j].replace(FIELD_BRACKETS, "$1");
+
+					// determine if opener or closer
+					switch (tag) {
+						case '/':
+							// close current tag and retrieve last tag
+							currTag = lastTag = stack.pop();
+							break;
+						default:
+							// add new tag to hierarchy
+							stack.push(currTag);
+							lastTag = currTag;
+							currTag = document.createElement(tag);
+							lastTag.appendChild(currTag);
+					}
+				}
+				break;
+			case 'data':
+				// is data row
+				var key = row[0], value = row[1];
+
+				// attribute has key and value
+				if (currTag) {
+					if (value) {
+						currTag.setAttribute(key, value);
+					}
+					else {
+						currTag.appendChild(document.createTextNode(key));
+					}
+				}
+				break;
+		}
+	}
+
+	return xml;
+}
+
+function Vsv2JSON(vsv) {
+	if (typeof vsv == "string") {
+		vsv = vsvRow2Array(vsv);
+	}
+
+	var json = "";
+
+	// parse by row
+	for (var i=0, ilen=vsv.length; i<ilen; i++) {
+		var row = vsv[i];
+		var rowType = row.shift();
+
+		switch (rowType) {
+			case 'header':
+				// is header row
+				// get all fields into array
+				for (var j=0, jlen=row.length; j<jlen; j++) {
+					var field = row[j].replace(FIELD_BRACKETS, "$1");
+					var bracketOpen = row[j].substring(0, 1);
+					var bracketClose = row[j].substring(row[j].length-1);
 
 					// determine if object or array, or closing either
 					switch (field) {
@@ -143,16 +241,13 @@ function Vsv2JSON(text) {
 							json += '"' + field + '": ' + bracketOpen + ' ';
 					}
 				}
-			}
-		}
-		else {
-			// is data row
-			var delimiter = row.substring(0, 1);
-			row = row.substring(1); // ignore first delimiter
-			row = row.split(delimiter);
-			var key = row[0], value = row[1];
-			// assign "key": "value"
-			json += '"' + key + '": "' + value + '", ';
+				break;
+			case 'data':
+				// is data row
+				var key = row[0], value = row[1];
+				// assign "key": "value"
+				json += '"' + key + '": "' + value + '", ';
+				break;
 		}
 	}
 
@@ -166,105 +261,39 @@ function Vsv2JSON(text) {
 	return json;
 }
 
-function Vsv2XML(text) {
-	var xml = document.createElement("div");
-	var stack = [xml];
-	var currTag = xml, lastTag = xml;
-
-	// parse by row
-	var rows = htmlEntitiesDecode(text).split("\n");
-	for (var i=0, ilen=rows.length; i<ilen; i++) {
-		var row = rows[i].replace( /^ +/, ''); // trim spaces only
-
-		if (row.length == 0) {
-			continue;
-		}
-
-		if (FIELD_OPENER.test(row)) {
-			// is header row
-			// get all fields into array
-			var matches = row.match(FIELD_BRACKETS);
-			if (matches) {
-				for (var j=0, jlen=matches.length; j<jlen; j++) {
-					var tag = matches[j].replace(FIELD_BRACKETS, "$1");
-
-					// determine if opener or closer
-					switch (tag) {
-						case '/':
-							// close current tag and retrieve last tag
-							currTag = lastTag = stack.pop();
-							break;
-						default:
-							// add new tag to hierarchy
-							stack.push(currTag);
-							lastTag = currTag;
-							currTag = document.createElement(tag);
-							lastTag.appendChild(currTag);
-					}
-				}
-			}
-		}
-		else {
-			// is data row
-			var delimiter = row.substring(0, 1);
-			row = row.substring(1); // ignore first delimiter
-			row = row.split(delimiter);
-			var key = row[0], value = row[1];
-
-			// attribute has key and value
-			if (currTag) {
-				if (value) {
-					currTag.setAttribute(key, value);
-				}
-				else {
-					currTag.appendChild(document.createTextNode(key));
-				}
-			}
-		}
-	}
-
-	return xml;
-}
-
-function onloadVsv() {
+function parseVsvEls() {
 	var vsvEls = document.querySelectorAll("[class^=vsv2]");
 
-	for (var  i=0, len=vsvEls.length; i<len; i++) {
+	for (var  i=0, ilen=vsvEls.length; i<ilen; i++) {
 		var el = vsvEls[i];
 		var text = el.innerText;
-		var retval;
+		var newEl = null;
 
-		if (el.classList.contains("vsv2table")) {
-			retval = Vsv2Table(text);
-			retval.className = "vsvtable";
+		if (el.classList.contains("vsv2list")) {
+			newEl = Vsv2List(text);
+			newEl.className = "vsvlist";
 		}
-		else if (el.classList.contains("vsv2list")) {
-			retval = Vsv2List(text);
-			retval.className = "vsvlist";
-		}
-		else if (el.classList.contains("vsv2json")) {
-			//if (JSON_BRACKET.test(text)) {
-			var obj = Vsv2JSON(text);
-			if (obj) {
-				retval = document.createElement("p");
-				retval.innerText = obj;
-				retval.className = "vsvjson";
-			}
-			//}
+		else if (el.classList.contains("vsv2table")) {
+			newEl = Vsv2Table(text);
+			newEl.className = "vsvtable";
 		}
 		else if (el.classList.contains("vsv2xml")) {
-		//else if (XML_BRACKET.test(text)) {
-			var obj = Vsv2XML(text);
-			if (obj) {
-				retval = obj;
-				retval.className = "vsvxml";
-			}
+			newEl = Vsv2XML(text);
+			newEl.className = "vsvxml";
+		}
+		else if (el.classList.contains("vsv2json")) {
+			var obj = Vsv2JSON(text);
+			newEl = document.createElement("p");
+			newEl.innerText = obj;
+			newEl.className = "vsvjson";
 		}
 
-		el.insertAdjacentElement('afterend', retval);
+		if (newEl) {
+			el.insertAdjacentElement('afterend', newEl);
+		}
 	}
 }
 
-window.addEventListener('load', onloadVsv, false);
+window.addEventListener('load', parseVsvEls, false);
 
 })(); // end script
