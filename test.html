@@ -36,11 +36,12 @@ pre {white-space: pre-wrap; }
 ,eggs
 ,patties
 ((forgot
-,
+, ,
 ,fries
 ,hazelnut creamer
+,,
 ,sliced bread
-,
+, ,
 </pre>
 
 <h3>List with headers</h3>
@@ -51,11 +52,12 @@ pre {white-space: pre-wrap; }
 ,eggs
 ,patties
 ((forgot
-,
+, ,
 ,fries
 ,hazelnut creamer
+,,
 ,sliced bread
-,
+, ,
 </pre>
 
 <pre class="vsv2list">
@@ -78,8 +80,42 @@ pre {white-space: pre-wrap; }
 
 <h3>Nested Lists</h3>
 
+Two ways to make nested lists: with and without headers. First row will determine whether headers are used. Mixing both methods can lead to unpredictable results.
+
+<h4>Nested Lists without Headers</h4>
+
+Each consecutive delimiter (null data) at the beginning of the row will indent one tier.
+
 <pre class="vsv2list">
-{{ use empty enclosed brackets for indentation
+*Things to do today
+
+**Feed cat
+***Rinse bowl
+***Open cat food
+***Mix dry and wet food in bowl
+***Deliver on a silver platter to Pixel
+
+**Wash car
+***Vacuum interior
+***Wash exterior
+***Wax exterior
+
+**Grocery shopping
+***Plan meals
+***Clean out fridge
+***Make shopping List
+****milk
+****eggs
+****patties*buns
+***Go to store
+
+*Things to do tomorrow
+</pre>
+
+<h4>Nested Lists with Headers</h4>
+
+<pre class="vsv2list">
+{{ use empty enclosed brackets to indent header and subsequent data rows
 {{Things to do today}}
 {{}}{{Feed cat}}
 `Rinse bowl
@@ -96,10 +132,9 @@ pre {white-space: pre-wrap; }
 {{}}{{}}{{Make shopping List}}
 ,milk
 ,eggs
-,patties
+,patties,buns
 {{}} {{row with only empty headers to return to that many previous tiers
 `Go to store
-{{}}{{}}{{}}{{}} {{excessive empty headers, attempt to return to lowest tier
 {{Things to do tomorrow}}
 </pre>
 

@@ -5,6 +5,7 @@ Interpret VSV markup into lists, tables, HTML, and JSON
 Public Domain - Open standard - No royalty
 //*/
 
+var log = console.log;
 
 function htmlEntitiesDecode(str) {
     return String(str).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
@@ -62,6 +63,7 @@ VSV.mapTo.list = function(vsv) {
 
 	var list = document.createElement("ul");
 	var stack = [list]; // nested list tree
+	var useHeaders = (VSV.fieldBrackets.test(vsv[0][1]) ) ? true : false; // nested list with or without headers
 	var lastTier = 0; // nested list last parent = stack[lastTier]
 
 	// parse by row
@@ -82,10 +84,7 @@ VSV.mapTo.list = function(vsv) {
 					}
 					else {
 						var label = document.createElement("li");
-						var span = document.createElement("span");
-						//span.style.display = "inline-block";
-						span.innerText = header;
-						label.appendChild(span);
+						label.innerText = header;
 						var newList = document.createElement("ul");
 						label.appendChild(newList);
 
@@ -95,9 +94,12 @@ VSV.mapTo.list = function(vsv) {
 							lastTier++;
 						}
 						else if (tier < lastTier) {
-							stack.pop();
-							lastTier--;
+							while (tier <= lastTier) {
+								stack.pop();
+								lastTier--;
+							}
 							stack[lastTier].appendChild(label);
+							stack.push(newList);
 						}
 						else {
 							stack.pop();
@@ -120,10 +122,43 @@ VSV.mapTo.list = function(vsv) {
 				break;
 			case 'data':
 				// is data row
+				var tier = 0;
 				row.forEach(function(data) {
-					var item = document.createElement("li");
-					item.innerText = data;
-					stack[lastTier].appendChild(item);
+					if (useHeaders) {
+						// headers as indentation
+						var item = document.createElement("li");
+						item.innerText = data;
+						stack[lastTier].appendChild(item);
+					}
+					else {
+						// repeated delimiters as indentation
+						if (data.length == 0) {
+							tier++;
+						}
+						else {
+							var item = document.createElement("li");
+							item.innerText = data;
+							if (tier > lastTier) {
+								lastTier++;
+								if (stack[lastTier].nodeName === "LI" ) {
+									var newList = document.createElement("ul");
+									newList.appendChild(item);
+									stack[lastTier].appendChild(newList);
+									stack[lastTier] = newList;
+								}
+								stack[lastTier+1] = item;
+							}
+							else if (tier < lastTier) {
+								lastTier = tier;
+								stack[lastTier].appendChild(item);
+								stack[lastTier+1] = item;
+							}
+							else {
+								stack[lastTier].appendChild(item);
+								stack[lastTier+1] = item;
+							}
+						}
+					}
 				});
 				break;
 		}
