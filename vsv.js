@@ -60,7 +60,9 @@ VSV.mapTo.list = function(vsv) {
 		vsv = VSV.mapTo.array(vsv);
 	}
 
-	var list = document.createElement("dl");
+	var list = document.createElement("ul");
+	var stack = [list]; // nested list tree
+	var lastTier = 0; // nested list last parent = stack[lastTier]
 
 	// parse by row
 	vsv.forEach(function(row) {
@@ -70,22 +72,58 @@ VSV.mapTo.list = function(vsv) {
 			case 'header':
 				// is header row
 				// get all fields into list
+				var tier = 1;
+				var newHeader = false;
 				row.forEach(function(header) {
 					header = header.replace(VSV.fieldBrackets, "$1");
-					var dt = document.createElement("dt");
-					var span = document.createElement("span");
-					span.style.display = "inline-block";
-					span.innerText = header;
-					dt.appendChild(span);
-					list.appendChild(dt);
+
+					if (header.length == 0) {
+						tier++;
+					}
+					else {
+						var label = document.createElement("li");
+						var span = document.createElement("span");
+						//span.style.display = "inline-block";
+						span.innerText = header;
+						label.appendChild(span);
+						var newList = document.createElement("ul");
+						label.appendChild(newList);
+
+						if (tier > lastTier) {
+							stack[lastTier].appendChild(label);
+							stack.push(newList);
+							lastTier++;
+						}
+						else if (tier < lastTier) {
+							stack.pop();
+							lastTier--;
+							stack[lastTier].appendChild(label);
+						}
+						else {
+							stack.pop();
+							stack[lastTier-1].appendChild(label);
+							stack.push(newList);
+						}
+
+						newHeader = true;
+					}
 				});
+
+				// row with only empty headers will return to that many previous tiers
+				if (!newHeader) {
+					while (tier > 1 && lastTier) {
+						stack.pop();
+						lastTier--;
+						tier--;
+					}
+				}
 				break;
 			case 'data':
 				// is data row
 				row.forEach(function(data) {
-					var dd = document.createElement("dd");
-					dd.innerText = data; // ignore first delimiter
-					list.appendChild(dd);
+					var item = document.createElement("li");
+					item.innerText = data;
+					stack[lastTier].appendChild(item);
 				});
 				break;
 		}
@@ -140,7 +178,7 @@ VSV.mapTo.xml = function(vsv) {
 	}
 
 	var xml = document.createElement("div");
-	var stack = [xml];
+	var stack = [xml]; // DOM tree
 	var currTag = xml, lastTag = xml;
 
 	// parse by row
@@ -150,7 +188,7 @@ VSV.mapTo.xml = function(vsv) {
 		switch (rowType) {
 			case 'header':
 				// is header row
-				// get all fields into array
+				// get all tags into DOM tree
 				row.forEach(function(tag) {
 					tag = tag.replace(VSV.fieldBrackets, "$1");
 
@@ -161,7 +199,7 @@ VSV.mapTo.xml = function(vsv) {
 							currTag = lastTag = stack.pop();
 							break;
 						default:
-							// add new tag to hierarchy
+							// add new tag to tree
 							stack.push(currTag);
 							lastTag = currTag;
 							currTag = document.createElement(tag);

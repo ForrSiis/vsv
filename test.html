@@ -5,12 +5,10 @@
 <title>VSV Examples</title>
 <meta charset="UTF-8">
 <style>
-[class^=vsv] {margin-bottom: 1em;
-border: 1px solid black; border-collapse: collapse; display: table /*box shrinks to fit contents*/;}
-.vsvtable td, .vsvtable th {border: 1px solid black; padding: 3px;}
-.vsvlist dt {display: list-item; list-style: circle inside; }
-.vsvlist dd {display: list-item;}
-pre {white-space: pre-wrap;}
+[class^=vsv] {margin-bottom: 1em; border: 1px solid black; padding: 0.4em; display: table /*box shrinks to fit contents*/; }
+.vsvtable td, .vsvtable th {border: 1px solid black; padding: 3px; }
+.vsvlist li {display: list-item; list-style: inside; }
+pre {white-space: pre-wrap; }
 .class {color: green;}
 </style>
 <script src="vsv.js"></script>
@@ -25,7 +23,7 @@ pre {white-space: pre-wrap;}
 
 <p>(TBD: other formats, including subtitles, playlist, ...)</p>
 
-<p>In the examples below, each VSV code block precedes their corresponding output after the code has been parsed. Comments are basically unclosed header fields. Style to your taste.</p>
+<p>In the examples below, each VSV code block precedes their corresponding output after the code has been parsed in javascript. Comments are basically unclosed header fields. Style to your taste.</p>
 
 <h2>VSV to list</h2>
 
@@ -76,6 +74,33 @@ pre {white-space: pre-wrap;}
 [[shell]]
 :/bin/bash
 ((etc.
+</pre>
+
+<h3>Nested Lists</h3>
+
+<pre class="vsv2list">
+{{ use empty enclosed brackets for indentation
+{{Things to do today}}
+{{}}{{Feed cat}}
+`Rinse bowl
+`Open cat food
+`Mix dry and wet food in bowl
+`Deliver on a silver platter to Pixel
+{{}}{{Wash car}}
+`Vacuum interior
+`Wash exterior
+`Wax exterior
+{{}}{{Grocery shopping}}
+`Plan meals
+`Clean out fridge
+{{}}{{}}{{Make shopping List}}
+,milk
+,eggs
+,patties
+{{}} {{row with only empty headers to return to that many previous tiers
+`Go to store
+{{}}{{}}{{}}{{}} {{excessive empty headers, attempt to return to lowest tier
+{{Things to do tomorrow}}
 </pre>
 
 <h2>VSV to table</h2>
@@ -129,7 +154,7 @@ pre {white-space: pre-wrap;}
  &lt;&lt;p&gt;&gt;
   ~From: Jani
  &lt;&lt;/&gt;&gt;
- &lt;&lt;h2&gt;&gt;
+ &lt;&lt;h3&gt;&gt;
   ~Reminder
  &lt;&lt;/&gt;&gt;
  &lt;&lt;p&gt;&gt;
