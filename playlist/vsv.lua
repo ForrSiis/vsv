@@ -10,6 +10,7 @@ Public Domain - Open standard - No royalty
 local VSV = {}
 VSV.mapTo = {}
 VSV.dataProp = {} -- data properties, like f for file
+VSV.temp = {} -- store temporary data, like current file
 VSV.vplExtension = "%.vpl"
 VSV.fieldOpener = "([%[%({<])%1";
 VSV.fieldBrackets = "(([%[%({<])%2.-([%]%)}>])%3)"
@@ -23,7 +24,7 @@ function descriptor()
 		description = "VPL playlists are simple yet powerful playlist format derived from VSV Versatile Separated Values format",
 		version = "0",
 		author = "Xay Voong",
-		capabilities = { "playing-listener" },
+		capabilities = { },
 	}
 end
 
@@ -165,16 +166,83 @@ end
 
 function VSV.dataProp.f (fields, pl)
 	-- f is for file
+
 	-- add file to playlist
-	for index, filename in ipairs(fields) do
-		--if (string.len(filename) > 0) then
-			local file = {}
-			file.path = filename
-			table.insert(pl, file)
-			vlc.msg.dbg("file found: ", filename)
-		--end
+	local data = fields[1]
+	if (data) then
+		local file = {}
+		file.path = data
+		table.insert(pl, file)
+		VSV.temp.currFile = file
+
+		vlc.msg.dbg("file found: ", data)
+		vlc.msg.dbg("vsvTempCurrFile: ", table.concat(VSV.temp.currFile, ", "))
 	end
 end
 
 ---------------------------
 
+function VSV.dataProp.t (fields, pl)
+	-- t is for title
+
+	-- add title to current file
+	local data = fields[1]
+	if (data) then
+		local file = VSV.temp.currFile
+		file.title = data
+		file.name = data
+
+		vlc.msg.dbg("title found: ", data)
+		vlc.msg.dbg("vsvTempCurrFile: ", table.concat(VSV.temp.currFile, ", "))
+	end
+end
+
+---------------------------
+
+function VSV.dataProp.a (fields, pl)
+	-- a is for artist
+
+	-- add title to current file
+	local data = fields[1]
+	if (data) then
+		local file = VSV.temp.currFile
+		file.artist = data
+
+		vlc.msg.dbg("artist found: ", data)
+		vlc.msg.dbg("vsvTempCurrFile: ", table.concat(VSV.temp.currFile, ", "))
+	end
+end
+
+---------------------------
+
+function VSV.dataProp.d (fields, pl)
+	-- d is for duration
+
+	-- add title to current file
+	local data = fields[1]
+	if (data) then
+		local file = VSV.temp.currFile
+		file.duration = data
+
+		vlc.msg.dbg("duration found: ", data)
+		vlc.msg.dbg("vsvTempCurrFile: ", table.concat(VSV.temp.currFile, ", "))
+	end
+end
+
+---------------------------
+
+function VSV.dataProp.desc (fields, pl)
+	-- desc is for description
+
+	-- add title to current file
+	local data = fields[1]
+	if (data) then
+		local file = VSV.temp.currFile
+		file.description = data
+
+		vlc.msg.dbg("description found: ", data)
+		vlc.msg.dbg("vsvTempCurrFile: ", table.concat(VSV.temp.currFile, ", "))
+	end
+end
+
+---------------------------
