@@ -39,9 +39,6 @@ function probe()
 
 	local okay = string.match( vlc.path, VSV.vplExtension )
 
-	-- debug
-	vlc.msg.dbg(okay, "VPL OKAY!!", "\n")
-
 	return okay
 end
 
@@ -73,13 +70,10 @@ function VSV.mapTo.pl (vsv)
 	for index, row in ipairs(vsv) do
 		rowType = table.remove(row, 1)
 		if (rowType == "header") then
-			vlc.msg.dbg("Is Header Row\n")
 
 		else
-			vlc.msg.dbg("Is Data Row\n")
 			prop = table.remove(row, 1)
 			if ( prop and VSV.dataProp[prop] ) then
-				vlc.msg.dbg("Property found: ", prop)
 				VSV.dataProp[prop](row, pl)
 			end
 		end
@@ -94,12 +88,9 @@ function VSV.mapTo.array (vsv)
 	-- each array item is subarray of header or data items
 	-- each subarray's 0th index is 'header' or 'data'
 
-	vlc.msg.dbg("\n", "Called VSV.mapTo.array", "\n")
-
 	vsvArray = {}
 
 	for index, row in ipairs(vsv) do
-	vlc.msg.dbg("row: ", row, "\n")
 		-- trim spaces only
 		row = string.gsub(row, "^ +", "")
 		row = string.gsub(row, " +$", "")
@@ -111,8 +102,6 @@ function VSV.mapTo.array (vsv)
 			if (string.match(row, VSV.fieldOpener)) then
 				-- is header row
 
-				vlc.msg.dbg("header\n")
-
 				table.insert(matches, "header")
 
 				row:gsub(VSV.fieldBrackets,
@@ -120,10 +109,6 @@ function VSV.mapTo.array (vsv)
 						table.insert(matches, header)
 					end
 				)
-
-				vlc.msg.dbg("matches\n")
-				vlc.msg.dbg(table.concat(matches, "\t"))
-				vlc.msg.dbg("\n\n")
 			else
 				-- data row
 
@@ -132,7 +117,6 @@ function VSV.mapTo.array (vsv)
 				table.insert(matches, "data")
 
 				local delimiter = string.sub(row,1,1)
-				vlc.msg.dbg("delimiter\t", delimiter, "\t\n")
 				row = string.find(row, delimiter, -1) and string.sub(row, 2, -2) or string.sub(row, 2, -1)
 				string.gsub(row, "([^%"..delimiter.."]*)%"..delimiter.."?",
 					function(data)
@@ -145,19 +129,6 @@ function VSV.mapTo.array (vsv)
 			table.insert(vsvArray, matches)
 		end
 	end
-
-	-- debug start
-	vlc.msg.dbg("\nvsvArray size: ")
-	vlc.msg.dbg(table.getn(vsvArray))
-	vlc.msg.dbg("\n")
-	for key, row in ipairs(vsvArray) do
-		if type(row)=="string" then
-			vlc.msg.dbg(row, "\n")
-		elseif type(row)=="table" then
-			vlc.msg.dbg(table.concat(row, "\t"), "\n")
-		end
-	end
-	-- debug end
 
 	return vsvArray
 end
@@ -172,11 +143,16 @@ function VSV.dataProp.f (fields, pl)
 	if (data) then
 		local file = {}
 		file.path = data
+		file.title = VSV.temp.titleAll
+		file.artist = VSV.temp.artistAll
+		file.publisher = VSV.temp.publisherAll
+		file.description = VSV.temp.descriptionAll
+		file.comment = VSV.temp.commentAll
+
 		table.insert(pl, file)
 		VSV.temp.currFile = file
 
 		vlc.msg.dbg("file found: ", data)
-		vlc.msg.dbg("vsvTempCurrFile: ", table.concat(VSV.temp.currFile, ", "))
 	end
 end
 
@@ -193,7 +169,6 @@ function VSV.dataProp.t (fields, pl)
 		file.name = data
 
 		vlc.msg.dbg("title found: ", data)
-		vlc.msg.dbg("vsvTempCurrFile: ", table.concat(VSV.temp.currFile, ", "))
 	end
 end
 
@@ -209,7 +184,21 @@ function VSV.dataProp.a (fields, pl)
 		file.artist = data
 
 		vlc.msg.dbg("artist found: ", data)
-		vlc.msg.dbg("vsvTempCurrFile: ", table.concat(VSV.temp.currFile, ", "))
+	end
+end
+
+---------------------------
+
+function VSV.dataProp.p (fields, pl)
+	-- p is for publisher
+
+	-- add publisher to current file
+	local data = fields[1]
+	if (data) then
+		local file = VSV.temp.currFile
+		file.publisher = data
+
+		vlc.msg.dbg("publisher found: ", data)
 	end
 end
 
@@ -225,7 +214,6 @@ function VSV.dataProp.d (fields, pl)
 		file.duration = data
 
 		vlc.msg.dbg("duration found: ", data)
-		vlc.msg.dbg("vsvTempCurrFile: ", table.concat(VSV.temp.currFile, ", "))
 	end
 end
 
@@ -234,14 +222,93 @@ end
 function VSV.dataProp.desc (fields, pl)
 	-- desc is for description
 
-	-- add title to current file
+	-- add description to current file
 	local data = fields[1]
 	if (data) then
 		local file = VSV.temp.currFile
 		file.description = data
 
 		vlc.msg.dbg("description found: ", data)
-		vlc.msg.dbg("vsvTempCurrFile: ", table.concat(VSV.temp.currFile, ", "))
+	end
+end
+
+---------------------------
+
+function VSV.dataProp.comment (fields, pl)
+	-- comment is for comment
+
+	-- add comment to current file
+	local data = fields[1]
+	if (data) then
+		local file = VSV.temp.currFile
+		file.comment = data
+
+		vlc.msg.dbg("comment found: ", data)
+	end
+end
+
+---------------------------
+
+function VSV.dataProp.tAll (fields, pl)
+	-- tAll is for title for subsequent files
+
+	local data = fields[1]
+	if (data) then
+		VSV.temp.titleAll = data
+
+		vlc.msg.dbg("tAll found: ", data)
+	end
+end
+
+---------------------------
+
+function VSV.dataProp.aAll (fields, pl)
+	-- aAll is for artist for subsequent files
+
+	local data = fields[1]
+	if (data) then
+		VSV.temp.artistAll = data
+
+		vlc.msg.dbg("aAll found: ", data)
+	end
+end
+
+---------------------------
+
+function VSV.dataProp.pAll (fields, pl)
+	-- pAll is for publisher for subsequent files
+
+	local data = fields[1]
+	if (data) then
+		VSV.temp.publisherAll = data
+
+		vlc.msg.dbg("pAll found: ", data)
+	end
+end
+
+---------------------------
+
+function VSV.dataProp.descAll (fields, pl)
+	-- descAll is for description for subsequent files
+
+	local data = fields[1]
+	if (data) then
+		VSV.temp.descriptionAll = data
+
+		vlc.msg.dbg("descAll found: ", data)
+	end
+end
+
+---------------------------
+
+function VSV.dataProp.commentAll (fields, pl)
+	-- commentAll is for comments for subsequent files
+
+	local data = fields[1]
+	if (data) then
+		VSV.temp.commentAll = data
+
+		vlc.msg.dbg("commentAll found: ", data)
 	end
 end
 
