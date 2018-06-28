@@ -1,21 +1,29 @@
+{{Main}}
+
+`tAll`Cooking Beauties 2018
 `aAll`TVB
 ,pAll,TVB
-`descAll`Beautiful women celebrities compete in cooking contest. But will their cooking be delicious or horrendous?
-`commentAll`Beautiful Cooking returns to a third season after nine years of hiatus.
+`descAll`Beautiful women celebrities compete in cooking contest. But will their cooking be delicious or horrendous?``Beautiful Cooking returns to {{pAll}} for a third season after nine years of hiatus.
 
 `f`file:///f:/media/Chinese/-Variety/Cooking Beauties 2018/Cooking.Beauties.01.rmvb
-`t`Cooking Beauties 2018 - EP 01
+`t`<<tAll>>`EP 01
 `d`2700
+`desc`{{t}} features {{a}}.``{{descAll}}
 
 `f`file:///f:/media/Chinese/-Variety/Cooking Beauties 2018/Cooking.Beauties.02.rmvb
-`t`Cooking Beauties 2018 - EP 02
+`t`<<tAll>> - EP 02
 `d`2700
+`desc`{{t}} features {{a}}.``{{descAll}}
 
 `f`file:///f:/media/Chinese/-Variety/Cooking Beauties 2018/Cooking.Beauties.03.rmvb
-`t`Cooking Beauties 2018 - EP 03
+`t`<<tAll>> - EP 03
 `d`2700
+`desc`{{t}} features {{a}}.``{{descAll}}
 
 `f`file:///f:/media/Chinese/-Variety/Cooking Beauties 2018/Cooking.Beauties.04.rmvb
-`t`Cooking Beauties 2018 - EP 04
+`t`<<tAll>>`EP 04
+`a`[[aAll]]`beauties
+`p`[[pAll]]`partners
 `d`2700
+`desc`{{t}} features {{a}}.``{{descAll}}
 

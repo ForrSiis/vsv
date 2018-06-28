@@ -12,7 +12,7 @@ function htmlEntitiesDecode(str) {
 }
 
 var VSV = VSV || { "mapTo":{} };
-VSV.fieldOpener = /(\[\[|\(\(|\{\{|\<\<)/;
+VSV.fieldOpener = /^(\[\[|\(\(|\{\{|\<\<)/;
 VSV.fieldBrackets = /[\{\(\[\<]{2}(.*?)[\}\)\]\>]{2}/g;
 
 VSV.mapTo.array = function(text) {
