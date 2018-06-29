@@ -21,6 +21,7 @@ VSV.fieldBrackets = "(([%[%({<])%2(.-)([%]%)}>])%4)"
  -- short codes to replace text inside data
 VSV.replace = {
 	f = function () return VSV.temp.currFile.path end,
+	s = function () return VSV.temp.currFile.subtitle end,
 	t = function () return VSV.temp.currFile.title end,
 	a = function() return VSV.temp.currFile.artist end,
 	p = function() return VSV.temp.currFile.publisher end,
@@ -183,6 +184,28 @@ function VSV.dataProp.f (fields, pl)
 		VSV.temp.currFile = file
 
 		vlc.msg.dbg("file found: ", data)
+	end
+end
+
+---------------------------
+
+function VSV.dataProp.s (fields, pl)
+	-- s is for subtitle or lyric file
+
+	-- add subtitle to current file
+	local data = fields[1]
+	if (data) then
+		local file = VSV.temp.currFile
+
+		file.options = file.options or {}
+		table.insert(file.options, "sub-file="..data)
+		--table.insert(file.options, "input-slave="..data)
+		--table.insert(file.options, "no-sub-autodetect-file ")
+
+		VSV.temp.subtitle = data
+
+		vlc.msg.dbg("subtitle found: ", data)
+		--vlc.msg.dbg("file.options: ", table.concat(file.options), ", ")
 	end
 end
 
