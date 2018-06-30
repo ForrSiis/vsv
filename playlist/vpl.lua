@@ -12,29 +12,32 @@ VSV.mapTo = {}
 VSV.parse = {} -- additional parsing per row, e.g. substitute text
 VSV.dataProp = {} -- data properties, like f for file
 VSV.temp = {} -- store temporary data, like current file
+VSV.temp.vars = {} -- store custom variables
 VSV.vplExtension = "%.vpl"
 VSV.fieldOpener = "^([%[%({<])%1";
 VSV.fieldBrackets = "(([%[%({<])%2(.-)([%]%)}>])%4)"
+VSV.varPattern = "^:(.-)$"
 
 ---------------------------
 
  -- short codes to replace text inside data
 VSV.replace = {
-	f = function () return VSV.temp.currFile.path end,
-	s = function () return VSV.temp.currFile.subtitle end,
-	t = function () return VSV.temp.currFile.title end,
-	a = function() return VSV.temp.currFile.artist end,
-	p = function() return VSV.temp.currFile.publisher end,
-	d = function() return VSV.temp.currFile.duration end,
-	desc = function() return VSV.temp.currFile.description end,
-	comment = function() return VSV.temp.currFile.comment end,
+	f = function () return VSV.temp.currFile and VSV.temp.currFile.path or "" end,
+	s = function () return VSV.temp.currFile and VSV.temp.currFile.subtitle or "" end,
+	t = function () return VSV.temp.currFile and VSV.temp.currFile.title or "" end,
+	a = function() return VSV.temp.currFile and VSV.temp.currFile.artist or "" end,
+	p = function() return VSV.temp.currFile and VSV.temp.currFile.publisher or "" end,
+	d = function() return VSV.temp.currFile and VSV.temp.currFile.duration or "" end,
+	id = function() return VSV.temp.currFile and VSV.temp.currFile.id or "" end,
+	desc = function() return VSV.temp.currFile and VSV.temp.currFile.description or "" end,
+	comment = function() return VSV.temp.currFile and VSV.temp.currFile.comment or "" end,
 
-	tAll = function () return VSV.temp.titleAll end,
-	aAll = function() return VSV.temp.artistAll end,
-	pAll = function() return VSV.temp.publisherAll end,
-	dAll = function() return VSV.temp.durationAll end,
-	descAll = function() return VSV.temp.descriptionAll end,
-	commentAll = function() return VSV.temp.commentAll end,
+	tAll = function () return VSV.temp.titleAll or "" end,
+	aAll = function() return VSV.temp.artistAll or "" end,
+	pAll = function() return VSV.temp.publisherAll or "" end,
+	dAll = function() return VSV.temp.durationAll or "" end,
+	descAll = function() return VSV.temp.descriptionAll or "" end,
+	commentAll = function() return VSV.temp.commentAll or "" end,
 }
 
 ---------------------------
@@ -98,8 +101,8 @@ end
 
 function VSV.mapTo.pl (vsv)
 	vsv = VSV.mapTo.array(vsv);
-
 	local pl = {}
+	VSV.temp.id = 0
 
 	-- parse vsv rows
 	local section = "main"
@@ -171,17 +174,20 @@ function VSV.dataProp.f (fields, pl)
 	local data = fields[1]
 	if (data) then
 		local file = {}
+
+		VSV.temp.currFile = file
+		VSV.temp.file = data
+		VSV.temp.id = VSV.temp.id + 1
+
 		file.path = data
-		file.title = VSV.temp.titleAll
-		file.artist = VSV.temp.artistAll
-		file.publisher = VSV.temp.publisherAll
-		file.description = VSV.temp.descriptionAll
-		file.comment = VSV.temp.commentAll
+		file.id = VSV.temp.id
+		file.title = VSV.parse.replace(VSV.temp.titleAll)
+		file.artist = VSV.parse.replace(VSV.temp.artistAll)
+		file.publisher = VSV.parse.replace(VSV.temp.publisherAll)
+		file.description = VSV.parse.replace(VSV.temp.descriptionAll)
+		file.comment = VSV.parse.replace(VSV.temp.commentAll)
 
 		table.insert(pl, file)
-
-		VSV.temp.file = data
-		VSV.temp.currFile = file
 
 		vlc.msg.dbg("file found: ", data)
 	end
@@ -306,15 +312,26 @@ end
 
 ---------------------------
 
+function VSV.dataProp.var (fields, pl)
+	-- var is for custom variables
+
+	local var, value = fields[1], fields[2]
+	VSV.temp.vars[var] = value
+
+	vlc.msg.dbg("variable found: ", var, value)
+end
+
+---------------------------
+
 function VSV.dataProp.tAll (fields, pl)
 	-- tAll is for title for subsequent files
 
 	local data = table.concat(fields, " - ")
-	data = VSV.parse.replace(data)
-
-	VSV.temp.titleAll = data
 
 	vlc.msg.dbg("tAll found: ", data)
+
+	data = VSV.parse.replace(data)
+	VSV.temp.titleAll = data
 end
 
 ---------------------------
@@ -375,14 +392,30 @@ function VSV.parse.replace (data)
 	-- replace or substitute special codes inside data text
 	-- such as title, artist, description
 	-- usually enclosed in double header brackets
-	-- ex. `t`{{t}} - part 01
+	-- ex. `t`{{tAll}} - part 01
+
+	if (not data) then return end
 
 	vlc.msg.dbg("VSV.parse.replace CALLED")
 
 	data = data:gsub(VSV.fieldBrackets,
 		function(a,b,c,d)
 	vlc.msg.dbg("VPL replace matches: ", a,b,c,d)
-			local replacement = VSV.replace[c] and VSV.replace[c]() or ""
+			-- a is entire matching string
+			-- b is double opening brackets
+			-- c is content between brackets
+			-- d is double closing brackets
+
+			local replacement = c
+
+			if (string.find(c, VSV.varPattern)) then
+				-- custom variable
+				local var = string.match(c, VSV.varPattern)
+				replacement = VSV.temp.vars[var] or ""
+			elseif (VSV.replace[c]) then
+				-- built-in properties
+				replacement = VSV.replace[c] and VSV.replace[c]()
+			end
 
 	vlc.msg.dbg("VPL replacement: ", replacement)
 
