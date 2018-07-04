@@ -211,6 +211,8 @@ function VSV.dataProp.f (fields, pl)
 	-- add file to playlist
 	local data = fields[1]
 	if (data) then
+		data = (VSV.temp.prefix or "") .. data .. (VSV.temp.suffix or "")
+
 		local file = {}
 
 		VSV.temp.currFile = file
@@ -423,6 +425,17 @@ function VSV.dataProp.descAll (fields, pl)
 	VSV.temp.descriptionAll = data
 
 	vlc.msg.dbg("descAll found: ", data)
+end
+
+---------------------------
+
+function VSV.dataProp.pathAll (fields, pl)
+	-- pathAll is affixes to file name for subsequent files
+
+	local prefix, suffix = fields[1] or "", fields[2] or ""
+	VSV.temp.prefix, VSV.temp.suffix = prefix, suffix
+
+	vlc.msg.dbg("pathAll found: ", prefix, suffix)
 end
 
 ---------------------------
