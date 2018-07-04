@@ -96,7 +96,45 @@ function parse()
 
 	-- list of media files to be played
 	mediaList = VSV.mapTo.pl(vsv)
+
+	-- sort items by id
+	table.sort(mediaList, VSV.sortById)
+
+	-- startPlayId given id
+	if (VSV.temp.startPlayId or VSV.temp.startPlayFile) then
+		mediaList = VSV.startPlayAt(mediaList, VSV.temp.startPlayId or VSV.temp.startPlayFile)
+	end
+
 	return mediaList
+end
+
+function VSV.startPlayAt (list, start)
+	local s, t = {}, {} -- temp hold moved items
+	local matched = false
+	local startType = type(start)
+
+	for k,v in pairs(list) do
+		if ( (startType == "number" and v.id == start) or (startType == "string" and string.find(v.path, start))) then
+			matched = true
+		end
+
+		if (matched) then
+			table.insert(s, v)
+		else
+			table.insert(t, v)
+		end
+	end
+
+	-- merge tables
+	for k,v in pairs(t) do
+		table.insert(s, v)
+	end
+
+	return s, true
+end
+
+function VSV.sortById (a, b)
+	return a.id < b.id
 end
 
 function VSV.mapTo.pl (vsv)
@@ -193,6 +231,20 @@ function VSV.dataProp.f (fields, pl)
 	end
 end
 
+---------------------------
+
+function VSV.dataProp.id (fields, pl)
+	-- id is for id, or playlist order
+
+	local data = fields[1]
+	if (data) then
+		data = tonumber(data)
+		local file = VSV.temp.currFile
+		VSV.temp.id, file.id = data, data
+
+		vlc.msg.dbg("id found: ", data)
+	end
+end
 ---------------------------
 
 function VSV.dataProp.s (fields, pl)
@@ -384,6 +436,28 @@ function VSV.dataProp.commentAll (fields, pl)
 	VSV.temp.commentAll = data
 
 	vlc.msg.dbg("commentAll found: ", data)
+end
+
+---------------------------
+
+function VSV.dataProp.startPlayId (fields, pl)
+	-- startPlayId starts playing at given id
+
+	local data = fields[1]
+	VSV.temp.startPlayId = tonumber(data)
+
+	vlc.msg.dbg("startPlayId found: ", data)
+end
+
+---------------------------
+
+function VSV.dataProp.startPlayFile (fields, pl)
+	-- startPlayFile starts playing at matching file name
+
+	local data = fields[1]
+	VSV.temp.startPlayFile = data
+
+	vlc.msg.dbg("startPlayFile found: ", data)
 end
 
 ---------------------------
