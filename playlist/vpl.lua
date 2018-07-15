@@ -369,10 +369,10 @@ end
 function VSV.dataProp.var (fields, pl)
 	-- var is for custom variables
 
-	local var, value = fields[1], fields[2]
+	local var, value = fields[1], { unpack(fields, 2) }
 	VSV.temp.vars[var] = value
 
-	vlc.msg.dbg("variable found: ", var, value)
+	vlc.msg.dbg("variable found: ", var, unpack(value))
 end
 
 ---------------------------
@@ -475,7 +475,7 @@ end
 
 ---------------------------
 
-function VSV.parse.replace (data)
+function VSV.parse.replace (data, fieldType)
 	-- replace or substitute special codes inside data text
 	-- such as title, artist, description
 	-- usually enclosed in double header brackets
@@ -498,10 +498,10 @@ function VSV.parse.replace (data)
 			if (string.find(c, VSV.varPattern)) then
 				-- custom variable
 				local var = string.match(c, VSV.varPattern)
-				replacement = VSV.temp.vars[var] or ""
+				replacement = VSV.temp.vars[var] and VSV.parse.replace( table.concat(VSV.temp.vars[var], '\n'), fieldType) or ""
 			elseif (VSV.replace[c]) then
 				-- built-in properties
-				replacement = VSV.replace[c] and VSV.replace[c]()
+				replacement = VSV.replace[c]()
 			end
 
 	vlc.msg.dbg("VPL replacement: ", replacement)
