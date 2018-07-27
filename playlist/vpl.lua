@@ -453,6 +453,14 @@ end
 
 ---------------------------
 
+function VSV.dataProp.startHere (fields, pl)
+	-- startHere starts playing at current file
+	VSV.temp.startPlayId = VSV.temp.id
+
+	vlc.msg.dbg("startHere found: ", VSV.temp.startPlayId)
+end
+---------------------------
+
 function VSV.dataProp.startPlayId (fields, pl)
 	-- startPlayId starts playing at given id
 
