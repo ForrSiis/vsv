@@ -235,6 +235,46 @@ end
 
 ---------------------------
 
+function VSV.dataProp.fn (fields, pl)
+	--[[
+		fn is for sequential numbering in file names
+		1st field = starting number in sequence
+		2nd field = ending number in sequence
+		if 1st field omitted, starting number set to 1
+		if 2nd field omitted, end number set to starting number
+		1st field should be less than or equal to 2nd field
+		if 2nd field less than 1st field, ending = starting number
+		if you need to pad numbers with leading 0s, use 'pad' property before 'fn'
+	--]]
+
+	local min = 1
+	if (tonumber(fields[1])) then
+		min = tonumber(fields[1])
+	end
+	local max = min
+	if (tonumber(fields[2]) and tonumber(fields[2]) > max) then
+		max = fields[2]
+	end
+	local pad = VSV.temp.pad or 1
+	for n=min, max do
+		local row = { string.format("%0"..pad.."d", n) }
+		VSV.dataProp.f (row, pl)
+	end
+
+	vlc.msg.dbg("fn found: " .. min .. ' - ' .. max)
+end
+
+---------------------------
+
+function VSV.dataProp.pad (fields, pl)
+	-- pad numbers with 0s for fn property
+
+	VSV.temp.pad = tonumber(fields[1]) or 1
+	vlc.msg.dbg("pad found: " .. VSV.temp.pad)
+end
+
+---------------------------
+
 function VSV.dataProp.id (fields, pl)
 	-- id is for id, or playlist order
 
