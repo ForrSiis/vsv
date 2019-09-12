@@ -1,0 +1,241 @@
+<!doctype html>
+<html>
+
+<head>
+<title>VSV Examples</title>
+<meta charset="UTF-8">
+<style>
+[class^=vsv] {margin-bottom: 1em; border: 1px solid black; padding: 0.4em; display: table /*box shrinks to fit contents*/; }
+.vsvtable td, .vsvtable th {border: 1px solid black; padding: 3px; }
+.vsvlist li {display: list-item; list-style: inside; }
+pre {white-space: pre-wrap; }
+.class {color: green;}
+</style>
+<script src="vsv.js"></script>
+<script src="test.js"></script>
+</head>
+
+<body>
+
+<h1>VSV Examples</h1>
+
+<p><a href="https://bitbucket.org/Shenafu/vsv">VSV</a> is easily converted to lists, tables, xml, and json.</p>
+
+<p>(TBD: other formats, including subtitles, playlist, ...)</p>
+
+<p>In the examples below, each VSV code block precedes their corresponding output after the code has been parsed in javascript. Comments are basically unclosed header fields. Style to your taste.</p>
+
+<h2>VSV to list</h2>
+
+<span class="class">class="vsv2list"</span>
+
+<h3>List with no headers</h3>
+
+<pre class="vsv2list">
+,milk
+,eggs
+,patties
+((forgot
+, ,
+,fries
+,hazelnut creamer
+,,
+,<a href="https://bitbucket.org/Shenafu/vsv">Sliced bread</a>
+, ,
+</pre>
+
+<h3>List with headers</h3>
+
+<pre class="vsv2list">
+{{Shopping List}}
+,milk
+,eggs
+,patties
+((forgot
+, ,
+,fries
+,hazelnut creamer
+,,
+,sliced bread
+, ,
+</pre>
+
+<pre class="vsv2list">
+[[loginname]]
+:smithj
+[[password]]
+:x
+[[userid]]
+:561
+[[groupid]]
+:561
+[[realname]]
+:Joe Smith
+[[homedir]]
+:/home/smithj
+[[shell]]
+:/bin/bash
+((etc.
+</pre>
+
+<h3>Nested Lists</h3>
+
+Two ways to make nested lists: with and without headers. First row will determine whether headers are used. Mixing both methods can lead to unpredictable results.
+
+<h4>Nested Lists without Headers</h4>
+
+Each consecutive delimiter (null data) at the beginning of the row will indent one tier.
+
+<pre class="vsv2list">
+*Things to do today
+
+--Feed cat
++++Rinse bowl
++++Open cat food
++++Mix dry and wet food in bowl
++++Deliver on a silver platter to Pixel
+
+--Wash car
++++Vacuum interior
++++Wash exterior
++++Wax exterior
+
+--Grocery shopping
++++Plan meals
++++Clean out fridge
++++Make shopping List
+&&&&milk
+&&&&eggs
+&&&&patties&buns
++++Go to store
+
+*Things to do tomorrow
+</pre>
+
+<h4>Nested Lists with Headers</h4>
+
+<pre class="vsv2list">
+{{ use empty enclosed brackets to indent header and subsequent data rows
+{{Things to do today}}
+{{}}{{Feed cat}}
+`Rinse bowl
+`Open cat food
+`Mix dry and wet food in bowl
+`Deliver on a silver platter to Pixel
+{{}}{{Wash car}}
+`Vacuum interior
+`Wash exterior
+`Wax exterior
+{{}}{{Grocery shopping}}
+`Plan meals
+`Clean out fridge
+{{}}{{}}{{Make shopping List}}
+,milk
+,eggs
+,patties,buns
+{{}} {{row with only empty headers to return to that many previous tiers
+`Go to store
+{{Things to do tomorrow}}
+</pre>
+
+<h2>VSV to table</h2>
+
+<span class="class">class="vsv2table"</span>
+
+<h3>Table with headers and data</h3>
+
+<p>Choose your own delimiters--anything but space.</p>
+
+<pre class="vsv2table">
+[[Name]] {{Age}} ((Gender))
+((each row of data can have different delimiter, no problem
+,Hammie, 20.5, F
+-Chow, Vivian-40-F
+:Amuseum:25:M:
+*Shena'Fu *18+5/12 *F
+|Grndr-1245|21 months||
+
+	Fairy Nuff	14 K	N/A
+</pre>
+
+<h3>Configuration file</h3>
+
+<pre class="vsv2table">
+[[General]]
+((display options: fullscreen, windowed, windowedmax
+=display=fullscreen
+=width=1920
+=height=1080
+</pre>
+
+<h3>Horizontal table</h3>
+<pre class="vsv2table">
+[[loginname]] [[password]] [[userid]] [[groupid]] [[realname]] [[homedir]] [[shell]]
+:smithj:x:561:561:Joe Smith:/home/smithj:/bin/bash
+</pre>
+
+<h2>VSV to XML</h2>
+
+<span class="class">class="vsv2xml"</span>
+
+<p>Note: Angled brackets (the less-than and greater-than symbols) must be written as HTML entities if served within HTML page via a browser or HTTP stream (e.g. cUrl). Otherwise, just use the symbols directly (e.g. interpreting a VSV text file to XML.).</p>
+
+<pre class="vsv2xml">
+((should work for all XML derivatives
+&lt;&lt;div&gt;&gt;
+ &lt;&lt;p&gt;&gt;
+  ~To: Tove
+ &lt;&lt;/&gt;&gt;
+ &lt;&lt;p&gt;&gt;
+  ~From: Jani
+ &lt;&lt;/&gt;&gt;
+ &lt;&lt;h3&gt;&gt;
+  ~Reminder
+ &lt;&lt;/&gt;&gt;
+ &lt;&lt;p&gt;&gt;
+   ~Meeting this weekend!
+  &lt;&lt;span&gt;&gt;
+   =style=color: red
+   ~ Don't forget!
+  &lt;&lt;/&gt;&gt;
+  &lt;&lt;p&gt;&gt;
+   ~-J
+  &lt;&lt;/&gt;&gt;
+ &lt;&lt;/&gt;&gt;
+&lt;&lt;/&gt;&gt;
+</pre>
+
+<h2>VSV to JSON</h2>
+
+<span class="class">class="vsv2json"</span>
+
+<pre class="vsv2json">
+((probably harder to read than JSON, but has similar capabilities
+((however, JSON doesn't allow comments, like these first two lines
+{{}}
+ {{menu}}
+  ~id~file
+  ~value~File
+  {{popup}}
+   [[menuitem]]
+    {{}}
+     ~value~New
+     ~onclick~CreateNewDoc()
+    {{;}}
+    {{}}
+     ~value~Open
+     ~onclick~OpenDoc()
+    {{;}}
+    {{}}
+     ~value~Close
+     ~onclick~CloseDoc()
+    {{;}}
+   [[;]]
+  {{;}}
+ {{;}}
+{{;}}
+</pre>
+
+</body>
+
+</html>
