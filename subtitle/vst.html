@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+
+<head>
+<title>VST development</title>
+<meta charset="UTF-8">
+<style>
+[class^=vsv] {margin-bottom: 1em; border: 1px solid black; padding: 0.4em; display: table /*box shrinks to fit contents*/; }
+.vsvtable td, .vsvtable th {border: 1px solid black; padding: 3px; }
+.vsvlist li {display: list-item; list-style: inside; }
+pre {white-space: pre-wrap; }
+.class {color: green;}
+</style>
+<script type="module" src="plyr-master/src/js/plyr.js"></script>
+<script>
+    const player = new Plyr('#player');
+</script>
+<script src="vsv.js"></script>
+<script src="test.js"></script>
+</head>
+
+<body>
+
+<h1>Versatile SubTitles development</h1>
+
+<div class="container">
+	<video controls crossorigin playsinline autoplay="true">
+		<source src="idol E04.mp4" type="video/mp4" size="640">
+
+		<!-- Caption files -->
+		<track kind="captions" label="English" srclang="en" src="file://f:/media/dl/idol E04.vst" default>
+
+		<!-- Fallback for browsers that don't support the <video> element -->
+		<a href="idol E04.mp4" download>Download</a>
+	</video>
+</div>
+<!-- Plyr resources and browser polyfills are specified in the pen settings -->
+
+</body>
+
+</html>
