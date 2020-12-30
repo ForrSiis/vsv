@@ -499,6 +499,9 @@ function VSV.dataProp.startHere (fields, pl)
 
 	vlc.msg.dbg("startHere found: ", VSV.temp.startPlayId)
 end
+
+VSV.dataProp.startPlayHere = VSV.dataProp.startHere
+
 ---------------------------
 
 function VSV.dataProp.startPlayId (fields, pl)
@@ -510,6 +513,8 @@ function VSV.dataProp.startPlayId (fields, pl)
 	vlc.msg.dbg("startPlayId found: ", data)
 end
 
+VSV.dataProp.startId = VSV.dataProp.startPlayId
+
 ---------------------------
 
 function VSV.dataProp.startPlayFile (fields, pl)
@@ -520,6 +525,8 @@ function VSV.dataProp.startPlayFile (fields, pl)
 
 	vlc.msg.dbg("startPlayFile found: ", data)
 end
+
+VSV.dataProp.startFile = VSV.dataProp.startPlayFile
 
 ---------------------------
 
