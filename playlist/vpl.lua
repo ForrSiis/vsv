@@ -520,9 +520,9 @@ end
 function VSV.dataProp.pathAll (fields, pl)
 	-- pathAll is affixed to file name for subsequent files
 
-	VSV.temp.affix = fields
+	VSV.temp.affix = #fields > 0 and fields or nil
 
-	vlc.msg.dbg("pathAll found: affix: "..table.concat(VSV.temp.affix, ","))
+	vlc.msg.dbg("pathAll found: affix: ".. (VSV.temp.affix and table.concat(VSV.temp.affix, ",") or 'nil'))
 end
 
 ---------------------------
