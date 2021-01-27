@@ -101,21 +101,45 @@ function parse()
 	table.sort(mediaList, VSV.sortById)
 
 	-- startPlayId given id
-	if (VSV.temp.startPlayId or VSV.temp.startPlayFile) then
-		mediaList = VSV.startPlayAt(mediaList, VSV.temp.startPlayId or VSV.temp.startPlayFile)
+	if VSV.temp.startPlayId then
+		mediaList = VSV.startPlayAt(mediaList, {"id", VSV.temp.startPlayId})
+	elseif VSV.temp.startPlayFile then
+		mediaList = VSV.startPlayAt(mediaList, {"file", VSV.temp.startPlayFile})
 	end
 
 	return mediaList
 end
 
+---------------------------------------
+
+--[[Lua Language Utility Functions]]
+
+function escapeRegex(re)
+	
+	local ret = re
+	local pattern = "([%-])"
+	local replacement = "%%%1"
+	
+	vlc.msg.dbg("ret before: "..ret)
+	
+	ret = string.gsub(ret, pattern, replacement)
+	
+	vlc.msg.dbg("ret after: "..ret)
+
+	return ret
+end
+
+---------------------------------------
+
 function VSV.startPlayAt (list, start)
 	local s, t = {}, {} -- temp hold moved items
 	local matched = false
-	local startType = type(start)
 
 	for k,v in pairs(list) do
-		if ( (startType == "number" and v.id == start) or (startType == "string" and string.find(v.path, start))) then
+		if ( not matched and ((start[1] == "id" and v.id == start[2]) or (start[1] == "file" and string.find(v.path, escapeRegex(start[2]))))) then
+			vlc.msg.dbg("start found: ".. table.concat(start, ","))
 			matched = true
+			vlc.msg.dbg("startPlayAt found: "..v.path)
 		end
 
 		if (matched) then
@@ -535,7 +559,7 @@ function VSV.dataProp.commentAll (fields, pl)
 
 	VSV.temp.commentAll = data
 
-	vlc.msg.dbg("commentAll found: ", data)
+	vlc.msg.dbg("commentAll found: "..data)
 end
 
 ---------------------------
@@ -544,7 +568,7 @@ function VSV.dataProp.startHere (fields, pl)
 	-- startHere starts playing at current file
 	VSV.temp.startPlayId = VSV.temp.id
 
-	vlc.msg.dbg("startHere found: ", VSV.temp.startPlayId)
+	vlc.msg.dbg("startHere found: "..VSV.temp.startPlayId)
 end
 
 VSV.dataProp.startPlayHere = VSV.dataProp.startHere
@@ -557,7 +581,7 @@ function VSV.dataProp.startPlayId (fields, pl)
 	local data = fields[1]
 	VSV.temp.startPlayId = tonumber(data)
 
-	vlc.msg.dbg("startPlayId found: ", data)
+	vlc.msg.dbg("startPlayId found: "..data)
 end
 
 VSV.dataProp.startId = VSV.dataProp.startPlayId
@@ -570,7 +594,7 @@ function VSV.dataProp.startPlayFile (fields, pl)
 	local data = fields[1]
 	VSV.temp.startPlayFile = data
 
-	vlc.msg.dbg("startPlayFile found: ", data)
+	vlc.msg.dbg("startPlayFile found: "..data)
 end
 
 VSV.dataProp.startFile = VSV.dataProp.startPlayFile
