@@ -167,12 +167,12 @@ function VSV.mapTo.pl (vsv)
 	VSV.temp.id = 0
 
 	-- parse vsv rows
-	local section = "main"
+	VSV.section = "main"
 
 	for index, row in ipairs(vsv) do
 		rowType = table.remove(row, 1)
 		if (rowType == "header") then
-
+			VSV.section = row[1]
 		else
 			prop = table.remove(row, 1)
 			if ( prop and VSV.dataProp[prop] ) then
