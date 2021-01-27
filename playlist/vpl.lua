@@ -288,25 +288,25 @@ function VSV.dataProp.fn (fields, pl)
 	
 	vlc.msg.dbg("fn found: "..table.concat(fields, ","))
 
-	local min, max, parts, pad = {}, {}, {}, VSV.temp.pad or {}
+	local mini, maxi, parts, pad = {}, {}, {}, VSV.temp.pad or {}
 	local x = 1
 	for i=1, #fields, 2 do
 	vlc.msg.dbg("i: " .. i)
-		min[x] = (tonumber(fields[i]) and tonumber(fields[i])) or 1
-		max[x] = (fields[i+1] and tonumber(fields[i+1]) and tonumber(fields[i+1])) or min[x]
+		mini[x] = (tonumber(fields[i]) and tonumber(fields[i])) or 1
+		maxi[x] = (fields[i+1] and tonumber(fields[i+1]) and tonumber(fields[i+1])) or mini[x]
 		x = x + 1
 	end
-	vlc.msg.dbg("min: " .. table.concat(min, ","))
-	vlc.msg.dbg("max: " .. table.concat(max, ","))
-	for i in ipairs(min) do
+	vlc.msg.dbg("mini: " .. table.concat(mini, ","))
+	vlc.msg.dbg("maxi: " .. table.concat(maxi, ","))
+	for i in ipairs(mini) do
 		if not pad[i] then
 			pad[i] = 1
 		end
-		parts[i] = min[i]
+		parts[i] = mini[i]
 	end
 	local totalFiles = 1
-	for i in ipairs(max) do
-		totalFiles = totalFiles * (max[i] - min[i] + 1)
+	for i in ipairs(maxi) do
+		totalFiles = totalFiles * (maxi[i] - mini[i] + 1)
 	end
 	vlc.msg.dbg("totalFiles: " .. totalFiles)
 	vlc.msg.dbg("parts: " .. table.concat(parts, ","))
@@ -320,8 +320,8 @@ function VSV.dataProp.fn (fields, pl)
 		end
 		parts[#parts] = parts[#parts] + 1
 		for i=#parts, 1, -1 do			
-			if parts[i] > max[i] then
-				parts[i] = min[i]
+			if parts[i] > maxi[i] then
+				parts[i] = mini[i]
 				if parts[i-1] then
 					parts[i-1] = parts[i-1] + 1
 				end
