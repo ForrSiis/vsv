@@ -212,10 +212,18 @@ function VSV.dataProp.f (fields, pl)
 	local data = fields
 	if (data) then
 		if type(data) == "table" then
-			data = data[1]
+			local filename = ""
 			if VSV.temp.affix then
-				data = (VSV.temp.affix[1] or "") .. data .. (VSV.temp.affix[2] or "")
+				for i, a in ipairs(VSV.temp.affix) do
+					filename = filename .. a
+					if data[i] then
+						filename = filename .. data[i]
+					end
+				end
+			else	
+				filename = table.concat(data);
 			end
+			data = filename
 		end
 		
 		local file = {}
