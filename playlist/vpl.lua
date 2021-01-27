@@ -47,7 +47,7 @@ function descriptor()
 		title = "Versatile PlayList",
 		shortdesc = "Load VPL playlists",
 		description = "VPL playlists are simple yet powerful playlist format derived from VSV Versatile Separated Values format",
-		version = "0",
+		version = "1.0",
 		author = "Xay Voong",
 		capabilities = {"playing-listener", "meta-listener" },
 	}
@@ -77,7 +77,7 @@ end
 function probe()
 	-- make sure the playlist file ends with acceptable extension
 
-	local okay = string.match( vlc.path, VSV.vplExtension )
+	local okay = vlc.path:match(VSV.vplExtension )
 
 	return okay
 end
@@ -122,7 +122,7 @@ function escapeRegex(re)
 	
 	vlc.msg.dbg("ret before: "..ret)
 	
-	ret = string.gsub(ret, pattern, replacement)
+	ret = ret:gsub(pattern, replacement)
 	
 	vlc.msg.dbg("ret after: "..ret)
 
@@ -136,7 +136,7 @@ function VSV.startPlayAt (list, start)
 	local matched = false
 
 	for k,v in pairs(list) do
-		if ( not matched and ((start[1] == "id" and v.id == start[2]) or (start[1] == "file" and string.find(v.path, escapeRegex(start[2]))))) then
+		if ( not matched and ((start[1] == "id" and v.id == start[2]) or (start[1] == "file" and v.path:find(escapeRegex(start[2]))))) then
 			vlc.msg.dbg("start found: ".. table.concat(start, ","))
 			matched = true
 			vlc.msg.dbg("startPlayAt found: "..v.path)
@@ -188,18 +188,18 @@ end
 function VSV.mapTo.array (vsv)
 	-- convert text rows into array
 	-- each array item is subarray of header or data items
-	-- each subarray's 0th index is 'header' or 'data'
+	-- each subarray's 1st index is 'header' or 'data'
 
 	vsvArray = {}
 
 	for index, row in ipairs(vsv) do
 		-- trim spaces only
-		row = string.gsub(row, "^ +", "")
-		row = string.gsub(row, " +$", "")
+		row = row:gsub("^ +", "")
+		row = row:gsub(" +$", "")
 
-		if (string.len(row) ~= 0) then
+		if (row:len() ~= 0) then
 			local matches = {}
-			if (string.match(row, VSV.fieldOpener)) then
+			if (row:match(VSV.fieldOpener)) then
 				-- is header row
 				table.insert(matches, "header")
 				row:gsub(VSV.fieldBrackets,
@@ -210,9 +210,9 @@ function VSV.mapTo.array (vsv)
 			else
 				-- data row
 				table.insert(matches, "data")
-				local delimiter = string.sub(row,1,1)
-				row = string.find(row, delimiter, -1) and string.sub(row, 2, -2) or string.sub(row, 2, -1)
-				string.gsub(row, "([^%"..delimiter.."]*)%"..delimiter.."?",
+				local delimiter = row:sub(1,1)
+				row = row:find(delimiter, -1) and row:sub(2, -2) or row:sub(2, -1)
+				row:gsub("([^%"..delimiter.."]*)%"..delimiter.."?",
 					function(data)
 						table.insert(matches, data)
 					end
@@ -258,11 +258,11 @@ function VSV.dataProp.f (fields, pl)
 
 		file.path = data
 		file.id = VSV.temp.id
-		file.title = VSV.parse.replace(VSV.temp.titleAll)
-		file.artist = VSV.parse.replace(VSV.temp.artistAll)
-		file.publisher = VSV.parse.replace(VSV.temp.publisherAll)
-		file.description = VSV.parse.replace(VSV.temp.descriptionAll)
-		file.comment = VSV.parse.replace(VSV.temp.commentAll)
+		file.title = VSV.parse.replace(VSV.temp.titleAll) or ""
+		file.artist = VSV.parse.replace(VSV.temp.artistAll) or ""
+		file.publisher = VSV.parse.replace(VSV.temp.publisherAll) or ""
+		file.description = VSV.parse.replace(VSV.temp.descriptionAll) or ""
+		file.comments = VSV.parse.replace(VSV.temp.commentAll) or ""
 
 		table.insert(pl, file)
 
@@ -621,9 +621,9 @@ function VSV.parse.replace (data, fieldType)
 
 			local replacement = c
 
-			if (string.find(c, VSV.varPattern)) then
+			if (c:find(VSV.varPattern)) then
 				-- custom variable
-				local var = string.match(c, VSV.varPattern)
+				local var = c:match(VSV.varPattern)
 				replacement = VSV.temp.vars[var] and VSV.parse.replace( table.concat(VSV.temp.vars[var], '\n'), fieldType) or ""
 			elseif (VSV.replace[c]) then
 				-- built-in properties
