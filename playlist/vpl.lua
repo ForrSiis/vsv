@@ -209,10 +209,15 @@ function VSV.dataProp.f (fields, pl)
 	-- f is for file
 
 	-- add file to playlist
-	local data = fields[1]
+	local data = fields
 	if (data) then
-		data = (VSV.temp.prefix or "") .. data .. (VSV.temp.suffix or "")
-
+		if type(data) == "table" then
+			data = data[1]
+			if VSV.temp.affix then
+				data = (VSV.temp.affix[1] or "") .. data .. (VSV.temp.affix[2] or "")
+			end
+		end
+		
 		local file = {}
 
 		VSV.temp.currFile = file
@@ -245,32 +250,67 @@ function VSV.dataProp.fn (fields, pl)
 		1st field should be less than or equal to 2nd field
 		if 2nd field less than 1st field, ending = starting number
 		if you need to pad numbers with leading 0s, use 'pad' property before 'fn'
+		
+		repeat for every sequential pair (3,4), (5,6), etc.
 	--]]
+	
+	vlc.msg.dbg("fn found: "..table.concat(fields, ","))
 
-	local min = 1
-	if (tonumber(fields[1])) then
-		min = tonumber(fields[1])
+	local min, max, parts, pad = {}, {}, {}, VSV.temp.pad or {}
+	local x = 1
+	for i=1, #fields, 2 do
+	vlc.msg.dbg("i: " .. i)
+		min[x] = (tonumber(fields[i]) and tonumber(fields[i])) or 1
+		max[x] = (fields[i+1] and tonumber(fields[i+1]) and tonumber(fields[i+1])) or min[x]
+		x = x + 1
 	end
-	local max = min
-	if (tonumber(fields[2]) and tonumber(fields[2]) > max) then
-		max = fields[2]
+	vlc.msg.dbg("min: " .. table.concat(min, ","))
+	vlc.msg.dbg("max: " .. table.concat(max, ","))
+	for i in ipairs(min) do
+		if not pad[i] then
+			pad[i] = 1
+		end
+		parts[i] = min[i]
 	end
-	local pad = VSV.temp.pad or 1
-	for n=min, max do
-		local row = { string.format("%0"..pad.."d", n) }
-		VSV.dataProp.f (row, pl)
+	local totalFiles = 1
+	for i in ipairs(max) do
+		totalFiles = totalFiles * (max[i] - min[i] + 1)
 	end
-
-	vlc.msg.dbg("fn found: " .. min .. ' - ' .. max)
+	vlc.msg.dbg("totalFiles: " .. totalFiles)
+	vlc.msg.dbg("parts: " .. table.concat(parts, ","))
+	for n=1, totalFiles do
+		local file = ""
+		for i, a in ipairs(VSV.temp.affix) do
+			file = file .. a
+			if pad[i] then
+				file = file .. string.format("%0"..pad[i].."d", parts[i])
+			end
+		end
+		parts[#parts] = parts[#parts] + 1
+		for i=#parts, 1, -1 do			
+			if parts[i] > max[i] then
+				parts[i] = min[i]
+				if parts[i-1] then
+					parts[i-1] = parts[i-1] + 1
+				end
+			end
+		end
+		vlc.msg.dbg("fn file: " .. file)
+		VSV.dataProp.f (file, pl)
+	end
 end
 
 ---------------------------
 
 function VSV.dataProp.pad (fields, pl)
 	-- pad numbers with 0s for fn property
+	
+	VSV.temp.pad = {}
+	for i in ipairs(fields) do
+		VSV.temp.pad[i] = tonumber(fields[i]) or 1
+	end
 
-	VSV.temp.pad = tonumber(fields[1]) or 1
-	vlc.msg.dbg("pad found: " .. VSV.temp.pad)
+	vlc.msg.dbg("pad found: "..table.concat(VSV.temp.pad, ","))
 end
 
 ---------------------------
@@ -470,12 +510,11 @@ end
 ---------------------------
 
 function VSV.dataProp.pathAll (fields, pl)
-	-- pathAll is affixes to file name for subsequent files
+	-- pathAll is affixed to file name for subsequent files
 
-	local prefix, suffix = fields[1] or "", fields[2] or ""
-	VSV.temp.prefix, VSV.temp.suffix = prefix, suffix
+	VSV.temp.affix = fields
 
-	vlc.msg.dbg("pathAll found: ", prefix, suffix)
+	vlc.msg.dbg("pathAll found: affix: "..table.concat(VSV.temp.affix, ","))
 end
 
 ---------------------------
