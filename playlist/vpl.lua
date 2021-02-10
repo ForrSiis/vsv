@@ -115,15 +115,15 @@ end
 --[[Lua Language Utility Functions]]
 
 function escapeRegex(re)
-	
+
 	local ret = re
 	local pattern = "([%-])"
 	local replacement = "%%%1"
-	
+
 	vlc.msg.dbg("ret before: "..ret)
-	
+
 	ret = ret:gsub(pattern, replacement)
-	
+
 	vlc.msg.dbg("ret after: "..ret)
 
 	return ret
@@ -229,6 +229,12 @@ end
 
 ---------------------------
 
+function findFile(pl, id)
+	return pl and pl[tonumber(id)] or nil
+end
+
+---------------------------
+
 function VSV.dataProp.f (fields, pl)
 	-- f is for file
 
@@ -244,12 +250,12 @@ function VSV.dataProp.f (fields, pl)
 						filename = filename .. data[i]
 					end
 				end
-			else	
+			else
 				filename = table.concat(data);
 			end
 			data = filename
 		end
-		
+
 		local file = {}
 
 		VSV.temp.currFile = file
@@ -282,10 +288,10 @@ function VSV.dataProp.fn (fields, pl)
 		1st field should be less than or equal to 2nd field
 		if 2nd field less than 1st field, ending = starting number
 		if you need to pad numbers with leading 0s, use 'pad' property before 'fn'
-		
+
 		repeat for every sequential pair (3,4), (5,6), etc.
 	--]]
-	
+
 	vlc.msg.dbg("fn found: "..table.concat(fields, ","))
 
 	local mini, maxi, parts, pad = {}, {}, {}, VSV.temp.pad or {}
@@ -319,7 +325,7 @@ function VSV.dataProp.fn (fields, pl)
 			end
 		end
 		parts[#parts] = parts[#parts] + 1
-		for i=#parts, 1, -1 do			
+		for i=#parts, 1, -1 do
 			if parts[i] > maxi[i] then
 				parts[i] = mini[i]
 				if parts[i-1] then
@@ -336,7 +342,7 @@ end
 
 function VSV.dataProp.pad (fields, pl)
 	-- pad numbers with 0s for fn property
-	
+
 	VSV.temp.pad = {}
 	for i in ipairs(fields) do
 		VSV.temp.pad[i] = tonumber(fields[i]) or 1
@@ -414,6 +420,25 @@ function VSV.dataProp.t (fields, pl)
 	file.name = data
 
 	vlc.msg.dbg("title found: ", data)
+end
+
+---------------------------
+
+function VSV.dataProp.tid (fields, pl)
+	-- t is for title
+
+	-- add title to file of specific ID
+	local id = table.remove(fields, 1)
+	local data = table.concat(fields, " - ")
+	data = VSV.parse.replace(data)
+	local file = findFile(pl, id)
+
+	if file then
+		file.title = data
+		file.name = data
+
+		vlc.msg.dbg("title found: " .. data)
+	end
 end
 
 ---------------------------
