@@ -22,9 +22,9 @@ VSV.varPattern = "^:(.-)$"
 
  -- short codes to replace text inside data
 VSV.replace = {
-	f = function () return VSV.temp.currFile and VSV.temp.currFile.path or "" end,
-	s = function () return VSV.temp.currFile and VSV.temp.currFile.subtitle or "" end,
-	t = function () return VSV.temp.currFile and VSV.temp.currFile.title or "" end,
+	f = function() return VSV.temp.currFile and VSV.temp.currFile.path or "" end,
+	s = function() return VSV.temp.currFile and VSV.temp.currFile.subtitle or "" end,
+	t = function() return VSV.temp.currFile and VSV.temp.currFile.title or "" end,
 	a = function() return VSV.temp.currFile and VSV.temp.currFile.artist or "" end,
 	p = function() return VSV.temp.currFile and VSV.temp.currFile.publisher or "" end,
 	d = function() return VSV.temp.currFile and VSV.temp.currFile.duration or "" end,
@@ -32,7 +32,12 @@ VSV.replace = {
 	desc = function() return VSV.temp.currFile and VSV.temp.currFile.description or "" end,
 	comment = function() return VSV.temp.currFile and VSV.temp.currFile.comment or "" end,
 
-	tAll = function () return VSV.temp.titleAll or "" end,
+	fpath = function() return VSV.temp.currFile and VSV.temp.currFile.fpath or "" end,
+	ffull = function() return VSV.temp.currFile and VSV.temp.currFile.ffull or "" end,
+	fname = function() return VSV.temp.currFile and VSV.temp.currFile.fname or "" end,
+	fext = function() return VSV.temp.currFile and VSV.temp.currFile.fext or "" end,
+
+	tAll = function() return VSV.temp.titleAll or "" end,
 	aAll = function() return VSV.temp.artistAll or "" end,
 	pAll = function() return VSV.temp.publisherAll or "" end,
 	dAll = function() return VSV.temp.durationAll or "" end,
@@ -46,7 +51,7 @@ function descriptor()
 	return {
 		title = "Versatile PlayList",
 		shortdesc = "Load VPL playlists",
-		description = "VPL playlists are simple yet powerful playlist format derived from VSV Versatile Separated Values format",
+		description = "VPL playlists are simple yet powerful playlist format derived from VSV (Versatile Separated Values) format",
 		version = "1.0",
 		author = "Xay Voong",
 		capabilities = {"playing-listener", "meta-listener" },
@@ -230,7 +235,7 @@ end
 ---------------------------
 
 function findFile(pl, id)
-	return pl and pl[tonumber(id)] or nil
+	return pl and pl[tonumber(id)]
 end
 
 ---------------------------
@@ -258,12 +263,21 @@ function VSV.dataProp.f (fields, pl)
 
 		local file = {}
 
-		VSV.temp.currFile = file
 		VSV.temp.file = data
 		VSV.temp.id = VSV.temp.id + 1
 
-		file.path = data
+		-- set certain file properties before assigning VSV.temp.currFile
 		file.id = VSV.temp.id
+		file.path = data									-- original entire URL
+		file.fpath = file.path:gsub("^.-:/+", "")		-- path without protocol or filename
+		file.fpath = file.fpath:gsub("(.*)/.-$", "%1")
+		file.ffull = file.path:gsub("^.*/", "")		-- filename with extension
+		file.fname = file.ffull:gsub("%..-$", "")	-- filename w/o extension
+		file.fext = file.ffull:gsub("^.*%.", "")		-- just extension
+
+		-- set currFile before running VSV.parse.replace
+		VSV.temp.currFile = file
+
 		file.title = VSV.parse.replace(VSV.temp.titleAll) or ""
 		file.artist = VSV.parse.replace(VSV.temp.artistAll) or ""
 		file.publisher = VSV.parse.replace(VSV.temp.publisherAll) or ""
