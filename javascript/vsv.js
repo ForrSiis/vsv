@@ -7,6 +7,14 @@ Public Domain - Open standard - No royalty
 
 var log = console.log;
 
+String.prototype.repeat = String.prototype.repeat ? String.prototype.repeat : function(times) {
+	var ret = '';
+	for (var i=0; i<times; i++) {
+		ret += this;
+	}
+	return ret;
+};
+
 function htmlEntitiesDecode(str) {
     return String(str).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"');
 }
@@ -126,7 +134,8 @@ VSV.writeData = function(arr, delims, indent) {
 	var s = '';
 	s += ' '.repeat(indent);
 	for (var k in arr) {
-		s += del + arr[k];
+		var t = arr[k] === 'undefined' ? '' : arr[k];
+		s += del + t;
 	}
 	s += '\n';
 
