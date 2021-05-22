@@ -189,7 +189,7 @@ Each consecutive delimiter (null data) at the beginning of the row will indent o
  &lt;&lt;p&gt;&gt;
   ~From: Jani
  &lt;&lt;/&gt;&gt;
- &lt;&lt;h3&gt;&gt;
+ &lt;&lt;h2&gt;&gt;
   ~Reminder
  &lt;&lt;/&gt;&gt;
  &lt;&lt;p&gt;&gt;
@@ -236,6 +236,73 @@ Each consecutive delimiter (null data) at the beginning of the row will indent o
 {{;}}
 </pre>
 
+<h2>VON (VSV Object Notation) to markup language</h2>
+
+<span class="class">class="vsv2vml"</span>
+
+<pre class="vsv2vml">
+(( markup language
+(( use { } to create and close elements
+(( use < > to start and end attributes definitions
+{div
+   {p
+      $ To: Tove
+   }
+   {p
+      $ From: Jani
+   }
+   {h2
+      $ Reminder
+   }
+   {p
+      $ Meeting this weekend!
+      {span
+         <
+            =style=color: red
+         >
+         $ Don't forget!
+      }
+   }
+   {p
+      $ -J
+   }
+}
+</pre>
+
+<h2>VON (VSV Object Notation) to programming object</h2>
+
+<span class="class">class="vsv2von"</span>
+
+<pre class="vsv2von"> 
+((programming object notation
+{menu
+   $id$file
+   ,value,File
+   {popup
+      [menuitem
+         {
+            ,value,New
+            ^onclick^CreateNewDoc
+         }
+         {
+            ,value,Open
+            ^onclick^OpenDoc^file
+         }
+         {
+            ,value,Close
+            ^onclick^CloseDoc^file
+         }
+      ]
+   }
+}
+(OpenDoc
+   <
+      =file=
+   >
+   $ contents = io.open(file);
+   $ return contents;
+)
+</pre>
 </body>
 
 </html>

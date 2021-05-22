@@ -11,13 +11,16 @@
 
 				switch (formatType) {
 					case 'json':
+					case 'von':
 						var obj = newEl;
 						newEl = document.createElement("p");
-						newEl.innerText = obj;
+						newEl.innerText = (formatType == "json") ? obj : JSON.stringify(obj, null, "   ");
 						break;
 					case 'list':
 					case 'table':
 					case 'xml':
+					case 'vml':
+					case 'default':
 				}
 
 				newEl.className = "vsv" + formatType;
