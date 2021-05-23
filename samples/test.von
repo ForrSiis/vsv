@@ -1,0 +1,34 @@
+(( VON (VSV Object Notation)
+(( to represent programming objects
+(( use { } to create and close objects, hashtables
+(( use [ ] to create and close arrays, lists
+(( use ( ) to create and close functions, code blocks
+(( use < > to start and end function arguments
+
+{menu
+   $id$file
+   ,value,File
+   {popup
+      [menuitem
+         {
+            ,value,New
+            ^onclick^CreateNewDoc
+         }
+         {
+            ,value,Open
+            ^onclick^OpenDoc^file
+         }
+         {
+            ,value,Close
+            ^onclick^CloseDoc^file
+         }
+      ]
+   }
+}
+(OpenDoc
+   <
+      =file=
+   >
+   $ contents = io.open(file);
+   $ return contents;
+)

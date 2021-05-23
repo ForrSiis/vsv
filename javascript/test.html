@@ -236,14 +236,16 @@ Each consecutive delimiter (null data) at the beginning of the row will indent o
 {{;}}
 </pre>
 
-<h2>VON (VSV Object Notation) to markup language</h2>
+<h2>VML (VSV markup language) for displaying pages</h2>
 
 <span class="class">class="vsv2vml"</span>
 
 <pre class="vsv2vml">
-(( markup language
+(( VML (VSV markup language)
+(( for displaying pages, including webpages, documents, printed paper
 (( use { } to create and close elements
 (( use < > to start and end attributes definitions
+
 {div
    {p
       $ To: Tove
@@ -269,12 +271,18 @@ Each consecutive delimiter (null data) at the beginning of the row will indent o
 }
 </pre>
 
-<h2>VON (VSV Object Notation) to programming object</h2>
+<h2>VON (VSV Object Notation) to represent programming objects</h2>
 
 <span class="class">class="vsv2von"</span>
 
 <pre class="vsv2von"> 
-((programming object notation
+(( VON (VSV Object Notation)
+(( to represent programming objects
+(( use { } to create and close objects, hashtables
+(( use [ ] to create and close arrays, lists
+(( use ( ) to create and close functions, code blocks
+(( use < > to start and end function arguments
+
 {menu
    $id$file
    ,value,File

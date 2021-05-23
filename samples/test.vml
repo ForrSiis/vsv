@@ -1,0 +1,28 @@
+(( VML (VSV markup language)
+(( for displaying pages, including webpages, documents, printed paper
+(( use { } to create and close elements
+(( use < > to start and end attributes definitions
+
+{div
+   {p
+      $ To: Tove
+   }
+   {p
+      $ From: Jani
+   }
+   {h2
+      $ Reminder
+   }
+   {p
+      $ Meeting this weekend!
+      {span
+         <
+            =style=color: red
+         >
+         $ Don't forget!
+      }
+   }
+   {p
+      $ -J
+   }
+}
