@@ -25,7 +25,7 @@ A header row consists of one or more header field. Each header field is enclosed
 <<>>
 ```
 
-A header row is identified when, ignoring the opening spaces of a row, the first two characters of a row are any consecutive double opening brackets, as listed above.
+A header row is identified when, ignoring the leading spaces of a row, the first two characters of a row are any consecutive double opening brackets, as listed above.
 
 Distinct header fields may use the same or different brackets types. Different bracket types may be employed on the same header row and across rows.
 
@@ -53,11 +53,12 @@ When exporting to a VSV file, characters that are found in the values of a given
 - Creators may have their own preferred delimiters. Common delimiters to use:
 ```
 ,
+=
+*
+-
 :
 |
 ;
-*
--
 @
 #
 %
@@ -72,7 +73,7 @@ The following rules dictate how plugins and code should read and interpret VSV f
 
 Rows are separated by newline. Leading spaces on each row are discarded and ignored.
 
-If the first two nonspace characters of a row are identical opening brackets, this is a header row. Else it is a data row.
+Ignoring the leading spaces of a row, if the first two characters of a row are identical opening brackets, this is a header row. Else it is a data row.
 
 ** Reading Header Rows **
 
@@ -92,6 +93,8 @@ Perform the following based on your platform and needs.
 - For other websites with plain HTML, include the "vsv.js" script to re-render sections of the page that have one of the following classes:
     - vsv2list
     - vsv2table
+    - vsv2von
+    - vsv2vml
     - vsv2json
     - vsv2xml
 
