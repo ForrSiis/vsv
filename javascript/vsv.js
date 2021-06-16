@@ -142,7 +142,7 @@ VSV.writeData = function(arr, delims, indent) {
 	return s;
 }
 
-VSV.mapTo.array = function(text, keepDelimiter=false) {
+VSV.mapTo.array = function(text, keepDelimiter) {
 	// convert text rows into array
 	// each array item is subarray of header or data items
 	// each subarray's 0th index is 'header' or 'data'
