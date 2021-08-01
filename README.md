@@ -106,8 +106,8 @@ Perform the following based on your platform and needs.
 
 ** Examples **
 
-* VSV in various styles and usages * see docs directory for samples
-* Comparison to other text formats
+* VSV in various styles and usages * Comparison to other text formats
+* see docs directory for samples * vsv, vpl, vsy, von, vml
 * View index.html, or visit https://forrsiis.github.io/vsv/index.html
 * Try out the TablesPlus plugins for Wordpress and SMF.
 
