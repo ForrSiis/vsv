@@ -93,7 +93,9 @@ In PHP, use the explode() function to store a row's values into an array split b
 
 Perform the following based on your platform and needs.
 
-- Get TablesPlus for SMF forums and Wordpress blogs.
+- Get TablesPlus for Wordpress blogs and SMF forums.
+-- WP : https://ieants.cc/code/plugins/wp-tablesplus.zip
+-- SMF : https://ieants.cc/code/plugins/smf-tablesplus.zip
 - For other websites with plain HTML, include the "vsv.js" script to re-render sections of the page that have one of the following classes:
     - vsv2list
     - vsv2table
@@ -104,10 +106,10 @@ Perform the following based on your platform and needs.
 
 ** Examples **
 
-* VSV in various styles and situations
+* VSV in various styles and usages * see docs directory for samples
 * Comparison to other text formats
 * View index.html, or visit https://forrsiis.github.io/vsv/index.html
-* Try out the TablesPlus plugins for SMF and Wordpress.
+* Try out the TablesPlus plugins for Wordpress and SMF.
 
 ** FAQ **
 

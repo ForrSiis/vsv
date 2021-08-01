@@ -1,12 +1,12 @@
 [[VSY]]
 
-(( VSY is used for site summary syndication.
+(( VSY is used for site summary syndication
 (( Channel or Meta section for your organization's data
 (( Items section for newest updates from your site
 
 [[Channel]]
 `f`http://www.example.com/main.html
-`t`VSS Title
+`t`VSY Title
 `desc`This is a description of the channel
 `cr`copyright
 `db`Mon, 06 Sep 2010 00:01:00 +0000
@@ -25,7 +25,7 @@
 
 [[Items]]
 `f`http://www.example.com/item.html
-`t`VSS Item
+`t`VSY Item
 `desc`This is a description of the item
 `dp`Mon, 06 Sep 2010 00:01:00 +0000
 `d`1079
