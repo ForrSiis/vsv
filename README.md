@@ -2,9 +2,13 @@
 
 ** Versatile Separated Values (VSV) **
 
-Proposal: A versatile, efficient, unambiguous, standardized, simple text format for creating tables, lists, configuration files, and hierarchy containers that's easily read and created by both humans and machines, that supports many variations for any personal style, preferences, and protocols. Can accept any nonspace character (including comma, colon, tab, asterisk, etc.) as delimiter automatically without user input (no annoying popups or options to fill in).
+**Proposal:** A versatile, efficient, unambiguous, standardized, regular, simple text format for creating tables, lists, configuration files, and hierarchy containers, that's easily read and created by both humans and machines, that supports many variations for any personal style, preferences, and protocols. Can accept any nonspace character (including comma, colon, tab, asterisk, etc.) as delimiter automatically without user input (no annoying popups or options to fill in).
 
-The same simple algorithm will accept almost any delimiter you want. You want commas like CSV? No problem. Or fields separated by tab (TSV)? Sure. How about *NIX files that use colons? We'll take it. Want to mix them up in the same table or file? Go ahead.
+The same simple algorithm will accept almost any delimiter you want. You want commas like CSV? No problem. Or fields separated by tab (TSV)? Sure. How about * NIX files that use colons? We'll take it. Want to mix them up in the same table or file? Go ahead. These simple rules mean it's very easy for both humans and machines to encode and decode VSV files.
+
+Since the rules are simple, consistent, and regular, VSV can be adopted for any purpose. Such as HTML lists and tables, media playlist, subtitle, real-time captioning, site summary syndication, configuration files, object and array notation, page markup, style sheets, notes, etc. The creator of VSV always writes notes and lists in VSV, and only uses the simple yet powerful VPL (VSV playlist) format in VLC media player (hundreds of .vpl files). VSV files take up much smaller space, to represent the same data compared to other formats, such as XML, JSON, RSS, XSPF, M3U, etc.
+
+Moreover, VSV provides potentially greater functionality than other formats, due to versatility and extensibility for custom or vendor specified variables. For instance, VPL provides an easy way to load a list of files that only differ by incremental values (i.e. all episodes in all seasons of a show.) This would take up only simple three lines in VPL; whereas other formats would take dozens, if not hundreds of lines. That's because in other formats, each episode must be declared separately. Fortunately, VSV (thus VPL) are humane, dynamic formats that allow programs to interpret and execute the data as efficiently as possible.
 
 ** Exporting to VSV (creating files) **
 
