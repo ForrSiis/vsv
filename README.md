@@ -2,7 +2,7 @@
 
 ** Versatile Separated Values (VSV) **
 
-Proposal: A versatile, efficient, unambiguous, standardized, simple text format for creating tables and lists that's easily read and created by both humans and machines, that supports many variations for any personal style, preferences, and protocols. Can accept any nonspace character (including comma, colon, tab, asterisk, etc.) as delimiter automatically without user input (no annoying popups or options to fill in).
+Proposal: A versatile, efficient, unambiguous, standardized, simple text format for creating tables, lists, configuration files, and hierarchy containers that's easily read and created by both humans and machines, that supports many variations for any personal style, preferences, and protocols. Can accept any nonspace character (including comma, colon, tab, asterisk, etc.) as delimiter automatically without user input (no annoying popups or options to fill in).
 
 The same simple algorithm will accept almost any delimiter you want. You want commas like CSV? No problem. Or fields separated by tab (TSV)? Sure. How about *NIX files that use colons? We'll take it. Want to mix them up in the same table or file? Go ahead.
 
@@ -102,16 +102,21 @@ Perform the following based on your platform and needs.
 
 * VSV in various styles and situations
 * Comparison to other text formats
-* View test.html with vsv.js in the same folder.
-* Try out the plugins for SMF and Wordpress.
+* View index.html, or visit https://forrsiis.github.io/vsv/index.html
+* Try out the TablesPlus plugins for SMF and Wordpress.
 
 ** FAQ **
 
 * How to handle values that contain just newline?
     * Blank lines is recommended to be skipped over in the output.
-* Can it be used for objects or hierarchy? i.e. in place of JSON, XML, HTML
-    * The syntax of VSV is flexible enough as substitute for JSON and XML. However, the aesthetics may or may not fit your personal taste.
+* Can it be used for objects or hierarchical containers? i.e. in place of JSON, XML, HTML
+    * The syntax of VSV is flexible, yet consistent and reliable enough as substitute for JSON and XML. Moreover, much easier to read and smaller file size than those behemoths.
 * Can it be used as configuration file? cf. INI, CONF files, passwd
     * Yes, VSV can be used to replace simple configuration and database files.
-* Can it be used for subtitles and playlists?
-    * Yes, VSV can be used for subtitles and playlists. Standards are in R&D phase.
+* Can it be used for subtitles, playlists, site summary, etc?
+    * Yes, VSV can be adapted for subtitles, playlists, and site summary syndication, and many other uses. Standards are in R&D phase. Playlists are already viable for VLC -- providing simple, yet powerful and elegant way to build playlists compared to other formats.
+
+** Links **
+
+* Showcase of lists, tables, object notation @ https://forrsiis.github.io/vsv/index.html
+* Discussion about VSV, including expanding to various usages @  https://ieants.cc/smf/index.php?topic=203.0
